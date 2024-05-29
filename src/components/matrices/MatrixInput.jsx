@@ -29,7 +29,7 @@ const MatrixInput = () => {
                                 {row.map((value, colIndex) => (
                                     <input
                                         key={colIndex}
-                                        className={`w-full h-10 text-center p-1 border-2 ${colIndex === columns - 1 ? 'constant-term' : 'border-primary-dark bg-background-light'
+                                        className={`w-full h-10 text-center p-1 border-2 ${colIndex === columns - 1 ? 'constant-term' : 'border-primary-dark bg-background-light text-black'
                                             } dark:border-gray-600 dark:bg-dark-background dark:text-background-light`}
                                         type="number"
                                         value={value}

@@ -8,6 +8,8 @@ import MatrixSizeModal from '../components/matrices/MatrixSizeModal';
 import MatrixResults from '../components/matrices/MatrixResults';
 import MatrixSolution from '../components/matrices/MatrixSolution';
 
+import MatrixTest from '../components/matrices/MatrixTest';
+
 const Matrices = () => {
     const { isModalOpen, openModal, closeModal, solveGaussJordan } = useMatrix();
 
@@ -70,6 +72,7 @@ const Matrices = () => {
                     <MatrixSolution />
                 </div>
             </div>
+            <MatrixTest rows={5} columns={6} />
         </>
     );
 };
