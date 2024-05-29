@@ -7,3 +7,53 @@
   height: 40px;
   object-fit: contain;
 }
+
+/* Agrega aquí los estilos necesarios para la apariencia de tu aplicación, incluyendo los estilos para los componentes de la matriz */
+
+.matrix-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+.matrix-bracket-left,
+.matrix-bracket-right {
+  width: 20px;
+  height: 100%;
+  border: 2px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.matrix-container {
+  display: grid;
+  gap: 10px;
+}
+
+.constant-term {
+  background-color: #f0f0f0;
+}
+
+.bg-primary {
+  background-color: #0D87BF;
+}
+
+.bg-primary-dark {
+  background-color: #0A6A99;
+}
+
+.text-primary-dark {
+  color: #0A6A99;
+}
+
+.bg-dark-foreground {
+  background-color: #333;
+}
+
+.bg-dark-background {
+  background-color: #222;
+}
+
+.text-background-light {
+  color: #fff;
+}

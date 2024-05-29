@@ -7,7 +7,7 @@ import exportarResultadoIcon from '../../assets/img/exportarSalida.png';
 
 const MatrixToolbar = ({ onSizeSelect, onImport, onExport, onReset, onExportResult }) => {
     return (
-        <div className='flex flex-wrap justify-center lg:justify-start space-x-2 space-y-2 lg:space-y-0 p-4 shadow-md bg-white dark:bg-dark-foreground rounded-md'>
+        <div className='flex flex-wrap justify-center lg:justify-start space-x-2 space-y-2 lg:space-y-0 p-4 shadow-md bg-white dark:bg-dark-foreground '>
 
             <button onClick={onImport} className='flex flex-col lg:flex-row items-center justify-center space-x-0 lg:space-x-2 bg-primary dark:bg-secondary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
                 <img src={importarIcon} alt="Importar" className='w-10 h-10 lg:w-12 lg:h-12' style={{ minWidth: '40px', minHeight: '40px' }} />

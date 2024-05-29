@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { useMatrix } from './../../context/MatrixContext';
+import { useMatrix } from '../../context/MatrixContext';
 
 const MatrixSizeModal = ({ isOpen, onClose }) => {
     const { matrixSize, setMatrixSize } = useMatrix();
@@ -89,7 +89,7 @@ const MatrixSizeModal = ({ isOpen, onClose }) => {
     };
 
     return (
-        <Transition appear show={isOpen} as={React.Fragment}>
+        <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={onClose}>
                 <Transition.Child
                     as={Fragment}

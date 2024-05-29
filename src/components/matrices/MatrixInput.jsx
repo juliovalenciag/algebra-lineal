@@ -11,8 +11,9 @@ const MatrixInput = () => {
     }, [rows, columns, setMatrix]);
 
     const handleInputChange = (value, rowIndex, colIndex) => {
-        const newMatrix = [...matrix];
-        newMatrix[rowIndex][colIndex] = parseFloat(value) || 0;
+        const newMatrix = matrix.map((row, i) =>
+            row.map((val, j) => (i === rowIndex && j === colIndex ? parseFloat(value) || 0 : val))
+        );
         setMatrix(newMatrix);
     };
 

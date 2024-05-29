@@ -9,7 +9,7 @@ import MatrixResults from '../components/matrices/MatrixResults';
 import MatrixSolution from '../components/matrices/MatrixSolution';
 
 const Matrices = () => {
-    const { isModalOpen, openModal, closeModal } = useMatrix();
+    const { isModalOpen, openModal, closeModal, solveGaussJordan } = useMatrix();
 
     const handleImport = () => {
         // Lógica para importar la matriz
