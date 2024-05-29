@@ -5,7 +5,7 @@ const MatrixContext = createContext();
 export const useMatrix = () => useContext(MatrixContext);
 
 export const MatrixProvider = ({ children }) => {
-    const [matrixSize, setMatrixSize] = useState({ rows: 3, columns: 3 });
+    const [matrixSize, setMatrixSize] = useState({ rows: 3, columns: 4 });
     const [matrix, setMatrix] = useState(Array(3).fill(Array(3).fill(0)));
     const [resultMatrix, setResultMatrix] = useState(null);
     const [solution, setSolution] = useState('');

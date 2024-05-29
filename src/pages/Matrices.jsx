@@ -8,8 +8,6 @@ import MatrixSizeModal from '../components/matrices/MatrixSizeModal';
 import MatrixResults from '../components/matrices/MatrixResults';
 import MatrixSolution from '../components/matrices/MatrixSolution';
 
-import MatrixTest from '../components/matrices/MatrixTest';
-
 const Matrices = () => {
     const { isModalOpen, openModal, closeModal, solveGaussJordan } = useMatrix();
 
@@ -56,23 +54,22 @@ const Matrices = () => {
                 onExportResult={handleExportResult}
             />
             <MatrixSizeModal isOpen={isModalOpen} onClose={closeModal} />
-            <div className='container mx-auto p-4 grid grid-cols-1 lg:grid-cols-3 gap-4'>
-                <div className='col-span-1'>
+            <div className='grid grid-cols-12 gap-4 p-4'>
+                <div className='col-span-12 lg:col-span-5 flex items-center justify-center  p-4'>
                     <MatrixInput />
                 </div>
-                <div className="col-span-1 lg:col-span-1 flex flex-col items-center justify-start">
+                <div className="col-span-12 lg:col-span-2 flex flex-col items-center justify-center  text-white p-4">
                     <MethodButtons
                         onGaussJordan={handleGaussJordan}
                         onDeterminante={handleDeterminante}
                         onInversa={handleInversa}
                     />
                 </div>
-                <div className="col-span-1 lg:col-span-1 flex flex-col items-center justify-start">
-                    <MatrixResults />
+                <div className="col-span-12 lg:col-span-5 flex flex-col items-center justify-start  p-4 space-y-4">
                     <MatrixSolution />
+                    <MatrixResults />
                 </div>
             </div>
-            <MatrixTest rows={5} columns={6} />
         </>
     );
 };
