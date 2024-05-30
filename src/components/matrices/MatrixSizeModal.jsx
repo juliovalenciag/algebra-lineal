@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import { FaPlus, FaMinus } from 'react-icons/fa';
 import { useMatrix } from '../../context/MatrixContext';
 
 const MatrixSizeModal = ({ isOpen, onClose }) => {
@@ -27,7 +28,7 @@ const MatrixSizeModal = ({ isOpen, onClose }) => {
                 drawMatrix(context, tempSize.rows, tempSize.columns);
             }
         }
-    }, [isOpen]);
+    }, [isOpen, tempSize]);
 
     const handleMouseDown = (e) => {
         const startX = e.clientX;
@@ -118,28 +119,34 @@ const MatrixSizeModal = ({ isOpen, onClose }) => {
                                 <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 dark:text-white">
                                     Ajustar Tamaño de la Matriz
                                 </Dialog.Title>
-                                <div className="mt-4 flex justify-center">
-                                    <canvas
-                                        ref={canvasRef}
-                                        className="border border-gray-300 dark:border-gray-700"
-                                        onMouseDown={handleMouseDown}
-                                    />
+                                <div className="mt-4 flex">
+                                    <div className="flex flex-col items-center space-y-2 mr-4">
+                                        <button onClick={() => setTempSize(prevSize => ({ ...prevSize, rows: Math.min(prevSize.rows + 1, 10) }))} className="bg-blue-500 text-white p-2 rounded-full">
+                                            <FaPlus />
+                                        </button>
+                                        <span className="text-gray-700 dark:text-gray-300">{tempSize.rows} Filas</span>
+                                        <button onClick={() => setTempSize(prevSize => ({ ...prevSize, rows: Math.max(prevSize.rows - 1, 1) }))} className="bg-red-500 text-white p-2 rounded-full">
+                                            <FaMinus />
+                                        </button>
+                                    </div>
+                                    <div className="flex flex-col items-center w-full">
+                                        <div className="flex items-center justify-center space-x-2 mb-4 w-full">
+                                            <button onClick={() => setTempSize(prevSize => ({ ...prevSize, columns: Math.min(prevSize.columns + 1, 10) }))} className="bg-blue-500 text-white p-2 rounded-full">
+                                                <FaPlus />
+                                            </button>
+                                            <span className="text-gray-700 dark:text-gray-300">{tempSize.columns} Columnas</span>
+                                            <button onClick={() => setTempSize(prevSize => ({ ...prevSize, columns: Math.max(prevSize.columns - 1, 1) }))} className="bg-red-500 text-white p-2 rounded-full">
+                                                <FaMinus />
+                                            </button>
+                                        </div>
+                                        <canvas
+                                            ref={canvasRef}
+                                            className="border border-gray-300 dark:border-gray-700"
+                                            onMouseDown={handleMouseDown}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="mt-4 flex justify-between">
-                                    <select
-                                        className="select select-bordered"
-                                        value={tempSize.rows}
-                                        onChange={(e) => setTempSize({ ...tempSize, rows: parseInt(e.target.value) })}
-                                    >
-                                        {[...Array(10).keys()].map(i => <option key={i} value={i + 1}>{i + 1}</option>)}
-                                    </select>
-                                    <select
-                                        className="select select-bordered"
-                                        value={tempSize.columns}
-                                        onChange={(e) => setTempSize({ ...tempSize, columns: parseInt(e.target.value) })}
-                                    >
-                                        {[...Array(10).keys()].map(i => <option key={i} value={i + 1}>{i + 1}</option>)}
-                                    </select>
+                                <div className="mt-4 flex justify-end">
                                     <button
                                         type="button"
                                         className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 dark:bg-blue-600 px-4 py-2 text-sm font-medium text-blue-900 dark:text-white hover:bg-blue-200 dark:hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
