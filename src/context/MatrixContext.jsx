@@ -6,7 +6,7 @@ export const useMatrix = () => useContext(MatrixContext);
 
 export const MatrixProvider = ({ children }) => {
     const [matrixSize, setMatrixSize] = useState({ rows: 3, columns: 4 });
-    const [matrix, setMatrix] = useState(Array(3).fill(Array(3).fill(0)));
+    const [matrix, setMatrix] = useState(Array.from({ length: 3 }, () => Array(4).fill(0)));
     const [resultMatrix, setResultMatrix] = useState(null);
     const [solution, setSolution] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,7 +16,7 @@ export const MatrixProvider = ({ children }) => {
 
     const updateMatrixSize = (rows, columns) => {
         setMatrixSize({ rows, columns });
-        setMatrix(Array(rows).fill(Array(columns).fill(0)));
+        setMatrix(Array.from({ length: rows }, () => Array(columns).fill(0)));
     };
 
     const solveGaussJordan = () => {
@@ -144,6 +144,69 @@ export const MatrixProvider = ({ children }) => {
         setSolution('');
     };
 
+    const displaySolution = (matrix) => {
+        let rows = matrix.length;
+        let columns = matrix[0].length;
+        let solution_texts = [];
+        let error_message = "";
+
+        let rank = matrix.reduce((acc, row) => acc + (row.slice(0, -1).some(val => val !== 0) ? 1 : 0), 0);
+        if (rank < rows) {
+            error_message = "El sistema tiene infinitas soluciones debido a las filas cero.\n";
+        }
+
+        let terminos_sin = [];
+        for (let i = 0; i < rows; i++) {
+            if (matrix[i].slice(0, -1).every(val => val === 0)) {
+                if (matrix[i][columns - 1] !== 0) {
+                    error_message = "Sistema inconsistente. No hay solución.\n";
+                    break;
+                } else {
+                    continue;
+                }
+            } else {
+                if (terminos_sin.length <= i) {
+                    terminos_sin.push([]);
+                }
+                let terms = [];
+                for (let j = 0; j < columns - 1; j++) {
+                    if (matrix[i][j] !== 0) {
+                        let coefficient = String(matrix[i][j]);
+                        if (coefficient === "1") {
+                            terms.push(`x${j + 1}`);
+                            terminos_sin[i].push(`x${j + 1}`);
+                            continue;
+                        }
+                        terms.push(`${coefficient}x${j + 1}`);
+                    }
+                }
+                let constant = matrix[i][columns - 1];
+                let equation = `x${i + 1} = ` + (terms.length > 0 ? terms.join(" + ") : '') + (constant !== 0 ? (constant > 0 ? ` + ${constant}` : ` - ${Math.abs(constant)}`) : '');
+                solution_texts.push(equation);
+            }
+        }
+
+        if (error_message === "Sistema inconsistente. No hay solución.\n") {
+            setSolution(error_message);
+            return;
+        }
+
+        let soluciones_infinitas = []; // Placeholder for infinite solutions logic
+        let variables = Array.from({ length: columns - 1 }, (_, i) => `x${i + 1}`);
+
+        let solution_text = error_message;
+        solution_text += "{ (" + variables.join(",") + ") |\n";
+        solution_text += solution_texts.join("\n");
+
+        if (solution_texts.length === 0) {
+            solution_text = "El sistema tiene infinitas soluciones (sistema indeterminado).";
+        } else {
+            solution_text += "\n}";
+        }
+
+        setSolution(solution_text);
+    };
+
     return (
         <MatrixContext.Provider value={{
             matrixSize,
@@ -155,6 +218,7 @@ export const MatrixProvider = ({ children }) => {
             solveGaussJordan,
             calculateDeterminant,
             calculateInverse,
+            displaySolution,
             isModalOpen,
             openModal,
             closeModal,

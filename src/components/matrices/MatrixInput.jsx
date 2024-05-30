@@ -54,7 +54,6 @@ const MatrixInput = () => {
                 <button onClick={handleZoomIn} className="bg-primary text-white p-2 rounded">
                     <FaPlus />
                 </button>
-
             </div>
 
             <div className="relative w-full h-full overflow-auto" ref={matrixRef}>

@@ -9,7 +9,7 @@ import MatrixResults from '../components/matrices/MatrixResults';
 import MatrixSolution from '../components/matrices/MatrixSolution';
 
 const Matrices = () => {
-    const { isModalOpen, openModal, closeModal, solveGaussJordan } = useMatrix();
+    const { isModalOpen, openModal, closeModal, solveGaussJordan, calculateDeterminant, calculateInverse } = useMatrix();
 
     const handleImport = () => {
         // Lógica para importar la matriz
@@ -31,18 +31,6 @@ const Matrices = () => {
         // Lógica para exportar el resultado
     };
 
-    const handleGaussJordan = () => {
-        solveGaussJordan(); // Resolver usando Gauss-Jordan
-    };
-
-    const handleDeterminante = () => {
-        // Lógica para calcular el determinante
-    };
-
-    const handleInversa = () => {
-        // Lógica para calcular la inversa
-    };
-
     return (
         <>
             <Navbar />
@@ -60,9 +48,9 @@ const Matrices = () => {
                 </div>
                 <div className="col-span-12 lg:col-span-2 flex flex-col items-center justify-center  text-white p-4">
                     <MethodButtons
-                        onGaussJordan={handleGaussJordan}
-                        onDeterminante={handleDeterminante}
-                        onInversa={handleInversa}
+                        onGaussJordan={solveGaussJordan}
+                        onDeterminante={calculateDeterminant}
+                        onInversa={calculateInverse}
                     />
                 </div>
                 <div className="col-span-12 lg:col-span-5 flex flex-col items-center justify-start  p-4 space-y-4">
