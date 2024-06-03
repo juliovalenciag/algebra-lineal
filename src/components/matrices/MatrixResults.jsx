@@ -12,7 +12,7 @@ const MatrixResults = () => {
             const [numerator, denominator] = fraction.toFraction().split('/');
             return { numerator, denominator };
         } catch (e) {
-            return { numerator: value, denominator: null };
+            return { numerator, denominator: null };
         }
     };
 
@@ -37,13 +37,14 @@ const MatrixResults = () => {
                             </div>
                             <div className="grid matrix-grid" style={{
                                 gridTemplateColumns: `repeat(${resultMatrix[0].length}, minmax(40px, 1fr))`,
-                                gap: '0px',
+                                gap: '2px',
                             }}>
                                 {resultMatrix.flatMap((row, rowIndex) =>
                                     row.map((value, colIndex) => {
                                         const { numerator, denominator } = formatAsFraction(value);
+                                        const isConstantTerm = colIndex === resultMatrix[0].length - 1;
                                         return (
-                                            <div key={`${rowIndex}-${colIndex}`} className="p-2 border rounded bg-white flex items-center justify-center" style={{ width: '60px', height: '60px' }}>
+                                            <div key={`${rowIndex}-${colIndex}`} className={`p-2 border rounded ${isConstantTerm ? 'bg-constant-term' : 'bg-white'} flex items-center justify-center`} style={{ width: '60px', height: '60px' }}>
                                                 {denominator ? (
                                                     <div className="fraction">
                                                         <span className="numerator">{numerator}</span>

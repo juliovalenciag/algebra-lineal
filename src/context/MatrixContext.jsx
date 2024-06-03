@@ -168,7 +168,14 @@ export const MatrixProvider = ({ children }) => {
                 let constant = new Fraction(matrix[i][columns - 1]);
                 let numerator = constant.s * constant.n;
                 let denominator = constant.d;
-                let equation = `x<sub>${i + 1}</sub> = <span class="fraction"><span class="numerator">${numerator}</span><span class="denominator">${denominator}</span></span>`;
+                let equation;
+                if (numerator === 0) {
+                    equation = `x<sub>${i + 1}</sub> = 0`;
+                } else if (denominator === 1) {
+                    equation = `x<sub>${i + 1}</sub> = ${numerator}`;
+                } else {
+                    equation = `x<sub>${i + 1}</sub> = <span class="fraction"><span class="numerator">${numerator}</span><span class="denominator">${denominator}</span></span>`;
+                }
                 solution_texts.push(equation);
             }
         }
@@ -180,6 +187,12 @@ export const MatrixProvider = ({ children }) => {
 
         let solution_text = "{ ( " + Array.from({ length: columns - 1 }, (_, i) => `x<sub>${i + 1}</sub>`).join(", ") + " ) | " + solution_texts.join(", ") + " }";
         setSolution(solution_text);
+    };
+
+    const resetMatrix = () => {
+        setMatrix(Array.from({ length: matrixSize.rows }, () => Array(matrixSize.columns).fill('')));
+        setResultMatrix(null);
+        setSolution('');
     };
 
     return (
@@ -194,6 +207,7 @@ export const MatrixProvider = ({ children }) => {
             calculateDeterminant,
             calculateInverse,
             displaySolution,
+            resetMatrix,
             isModalOpen,
             openModal,
             closeModal,

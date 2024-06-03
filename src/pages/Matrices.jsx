@@ -9,7 +9,7 @@ import MatrixResults from '../components/matrices/MatrixResults';
 import MatrixSolution from '../components/matrices/MatrixSolution';
 
 const Matrices = () => {
-    const { isModalOpen, openModal, closeModal, solveGaussJordan, calculateDeterminant, calculateInverse } = useMatrix();
+    const { isModalOpen, openModal, closeModal, solveGaussJordan, calculateDeterminant, calculateInverse, resetMatrix } = useMatrix();
 
     const handleImport = () => {
         // Lógica para importar la matriz
@@ -24,7 +24,7 @@ const Matrices = () => {
     };
 
     const handleReset = () => {
-        // Lógica para reiniciar la matriz
+        resetMatrix();
     };
 
     const handleExportResult = () => {
