@@ -12,7 +12,7 @@ const MethodButtons = () => {
         <div className="flex flex-col items-center lg:items-start space-y-4 p-6 rounded-lg shadow-lg bg-white dark:bg-dark-foreground">
             <Button
                 onClick={solveGaussJordan}
-                className='w-full flex items-center justify-start space-x-4 bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-4 rounded-md w-full'
+                className='w-full flex items-center justify-start space-x-4 bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-4 rounded-md'
             >
                 <img src={gaussJordanIcon} alt="Gauss-Jordan" className='w-12 h-12' />
                 <span>Gauss-Jordan</span>

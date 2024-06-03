@@ -57,3 +57,98 @@
 .text-background-light {
   color: #fff;
 }
+
+.fraction {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.fraction>span {
+  display: block;
+  padding: 0 0.1em;
+}
+
+.fraction span.fraction-divider {
+  border-top: 1px solid #000;
+  margin: -0.1em 0;
+  /* Ajusta el margen para evitar la línea desalineada */
+  line-height: 0.6;
+  /* Ajusta la altura de línea para centrar la fracción */
+}
+
+.matrix-wrapper {
+  padding: 10px;
+  display: inline-block;
+  position: relative;
+}
+
+input[type="number"],
+.matrix-grid div {
+  text-align: center;
+  font-size: 1.2rem;
+}
+
+.matrix-grid {
+  margin: 0;
+  overflow: auto;
+  max-height: 500px;
+  /* Ajuste para manejar matrices grandes */
+  max-width: 100%;
+}
+
+.bracket-wrapper {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.bracket {
+  position: absolute;
+  width: 20px;
+  border-color: black;
+}
+
+.bracket-left {
+  left: 0;
+  border-left: 4px solid;
+  border-top: 4px solid;
+  border-bottom: 4px solid;
+  height: 100%;
+  border-radius: 10px 0 0 10px;
+}
+
+.bracket-right {
+  right: 0;
+  border-right: 4px solid;
+  border-top: 4px solid;
+  border-bottom: 4px solid;
+  height: 100%;
+  border-radius: 0 10px 10px 0;
+}
+
+.cell-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5px;
+}
+
+.fraction {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 1;
+}
+
+.numerator {
+  display: block;
+}
+
+.denominator {
+  display: block;
+  border-top: 1px solid #000;
+}

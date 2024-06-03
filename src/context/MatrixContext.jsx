@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext } from 'react';
+import Fraction from 'fraction.js';
 
 const MatrixContext = createContext();
 
@@ -52,7 +53,7 @@ export const MatrixProvider = ({ children }) => {
         }
 
         setResultMatrix(m);
-        setSolution('');
+        displaySolution(m);
     };
 
     const calculateDeterminant = () => {
@@ -91,7 +92,7 @@ export const MatrixProvider = ({ children }) => {
         }
 
         setResultMatrix([[det]]);
-        setSolution('');
+        displaySolution([[det]]);
     };
 
     const calculateInverse = () => {
@@ -141,21 +142,20 @@ export const MatrixProvider = ({ children }) => {
 
         let inverseMatrix = augmentedMatrix.map(row => row.slice(n));
         setResultMatrix(inverseMatrix);
-        setSolution('');
+        displaySolution(inverseMatrix);
     };
 
     const displaySolution = (matrix) => {
-        let rows = matrix.length;
-        let columns = matrix[0].length;
-        let solution_texts = [];
+        const rows = matrix.length;
+        const columns = matrix[0].length;
+        const solution_texts = [];
         let error_message = "";
 
-        let rank = matrix.reduce((acc, row) => acc + (row.slice(0, -1).some(val => val !== 0) ? 1 : 0), 0);
+        const rank = matrix.reduce((acc, row) => acc + (row.slice(0, -1).some(val => val !== 0) ? 1 : 0), 0);
         if (rank < rows) {
             error_message = "El sistema tiene infinitas soluciones debido a las filas cero.\n";
         }
 
-        let terminos_sin = [];
         for (let i = 0; i < rows; i++) {
             if (matrix[i].slice(0, -1).every(val => val === 0)) {
                 if (matrix[i][columns - 1] !== 0) {
@@ -165,23 +165,10 @@ export const MatrixProvider = ({ children }) => {
                     continue;
                 }
             } else {
-                if (terminos_sin.length <= i) {
-                    terminos_sin.push([]);
-                }
-                let terms = [];
-                for (let j = 0; j < columns - 1; j++) {
-                    if (matrix[i][j] !== 0) {
-                        let coefficient = String(matrix[i][j]);
-                        if (coefficient === "1") {
-                            terms.push(`x${j + 1}`);
-                            terminos_sin[i].push(`x${j + 1}`);
-                            continue;
-                        }
-                        terms.push(`${coefficient}x${j + 1}`);
-                    }
-                }
-                let constant = matrix[i][columns - 1];
-                let equation = `x${i + 1} = ` + (terms.length > 0 ? terms.join(" + ") : '') + (constant !== 0 ? (constant > 0 ? ` + ${constant}` : ` - ${Math.abs(constant)}`) : '');
+                let constant = new Fraction(matrix[i][columns - 1]);
+                let numerator = constant.s * constant.n;
+                let denominator = constant.d;
+                let equation = `x<sub>${i + 1}</sub> = <span class="fraction"><span class="numerator">${numerator}</span><span class="denominator">${denominator}</span></span>`;
                 solution_texts.push(equation);
             }
         }
@@ -191,19 +178,7 @@ export const MatrixProvider = ({ children }) => {
             return;
         }
 
-        let soluciones_infinitas = []; // Placeholder for infinite solutions logic
-        let variables = Array.from({ length: columns - 1 }, (_, i) => `x${i + 1}`);
-
-        let solution_text = error_message;
-        solution_text += "{ (" + variables.join(",") + ") |\n";
-        solution_text += solution_texts.join("\n");
-
-        if (solution_texts.length === 0) {
-            solution_text = "El sistema tiene infinitas soluciones (sistema indeterminado).";
-        } else {
-            solution_text += "\n}";
-        }
-
+        let solution_text = "{ ( " + Array.from({ length: columns - 1 }, (_, i) => `x<sub>${i + 1}</sub>`).join(", ") + " ) | " + solution_texts.join(", ") + " }";
         setSolution(solution_text);
     };
 
