@@ -16,6 +16,8 @@ const MatrixResults = () => {
         }
     };
 
+    const isSquare = resultMatrix && resultMatrix.length === resultMatrix[0].length;
+
     return (
         <div className='relative flex flex-col items-center shadow-lg rounded-md bg-gray-100 p-5 w-full h-full'>
             <h2 className="text-2xl font-semibold mb-4">Matriz Resultante</h2>
@@ -37,12 +39,12 @@ const MatrixResults = () => {
                             </div>
                             <div className="grid matrix-grid" style={{
                                 gridTemplateColumns: `repeat(${resultMatrix[0].length}, minmax(40px, 1fr))`,
-                                gap: '2px',
+                                gap: '0px',
                             }}>
                                 {resultMatrix.flatMap((row, rowIndex) =>
                                     row.map((value, colIndex) => {
                                         const { numerator, denominator } = formatAsFraction(value);
-                                        const isConstantTerm = colIndex === resultMatrix[0].length - 1;
+                                        const isConstantTerm = !isSquare && colIndex === resultMatrix[0].length - 1;
                                         return (
                                             <div key={`${rowIndex}-${colIndex}`} className={`p-2 border rounded ${isConstantTerm ? 'bg-constant-term' : 'bg-white'} flex items-center justify-center`} style={{ width: '60px', height: '60px' }}>
                                                 {denominator ? (
