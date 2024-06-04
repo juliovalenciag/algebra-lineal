@@ -17,7 +17,9 @@ export const MatrixProvider = ({ children }) => {
 
     const updateMatrixSize = (rows, columns) => {
         setMatrixSize({ rows, columns });
-        setMatrix(Array.from({ length: rows }, () => Array(columns).fill(0)));
+        setMatrix(Array.from({ length: rows }, () => Array(columns).fill('')));
+        setResultMatrix(null);
+        setSolution('');
     };
 
     const solveGaussJordan = () => {
@@ -142,7 +144,7 @@ export const MatrixProvider = ({ children }) => {
 
         let inverseMatrix = augmentedMatrix.map(row => row.slice(n));
         setResultMatrix(inverseMatrix);
-        displaySolution(inverseMatrix);
+        setSolution('');
     };
 
     const displaySolution = (matrix) => {

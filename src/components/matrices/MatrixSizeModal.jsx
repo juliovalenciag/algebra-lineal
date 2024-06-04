@@ -4,7 +4,7 @@ import { FaPlus, FaMinus } from 'react-icons/fa';
 import { useMatrix } from '../../context/MatrixContext';
 
 const MatrixSizeModal = ({ isOpen, onClose }) => {
-    const { matrixSize, setMatrixSize } = useMatrix();
+    const { matrixSize, updateMatrixSize } = useMatrix();
     const [tempSize, setTempSize] = useState(matrixSize);
     const canvasRef = useRef(null);
 
@@ -55,7 +55,7 @@ const MatrixSizeModal = ({ isOpen, onClose }) => {
     };
 
     const handleAccept = () => {
-        setMatrixSize(tempSize);
+        updateMatrixSize(tempSize.rows, tempSize.columns);
         onClose();
     };
 
