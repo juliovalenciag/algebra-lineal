@@ -15,6 +15,9 @@ const MatrixInput = () => {
     }, [rows, columns, setMatrix]);
 
     const handleInputChange = (value, rowIndex, colIndex) => {
+        const isValidFraction = /^-?\d*\/?\d*$/.test(value);
+        if (!isValidFraction) return;
+
         const newMatrix = matrix.map((row, i) =>
             row.map((val, j) => (i === rowIndex && j === colIndex ? value : val))
         );
@@ -81,7 +84,7 @@ const MatrixInput = () => {
                                         <input
                                             key={colIndex}
                                             className={`p-2 border rounded ${colIndex === constantTermColumn ? bgColorConstant : bgColorDefault}`}
-                                            type="text"
+                                            type="number"
                                             value={value}
                                             onChange={(e) => handleInputChange(e.target.value, rowIndex, colIndex)}
                                             style={{ width: `${entryWidth}px`, height: `${entryHeight}px` }}

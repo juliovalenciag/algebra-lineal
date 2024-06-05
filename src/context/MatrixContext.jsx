@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import Fraction from 'fraction.js';
 
 const MatrixContext = createContext();
@@ -7,10 +7,14 @@ export const useMatrix = () => useContext(MatrixContext);
 
 export const MatrixProvider = ({ children }) => {
     const [matrixSize, setMatrixSize] = useState({ rows: 3, columns: 4 });
-    const [matrix, setMatrix] = useState(Array.from({ length: 3 }, () => Array(4).fill(0)));
+    const [matrix, setMatrix] = useState(Array.from({ length: 3 }, () => Array(4).fill('')));
     const [resultMatrix, setResultMatrix] = useState(null);
     const [solution, setSolution] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    useEffect(() => {
+        setMatrix(Array.from({ length: matrixSize.rows }, () => Array(matrixSize.columns).fill('')));
+    }, [matrixSize]);
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
@@ -21,6 +25,43 @@ export const MatrixProvider = ({ children }) => {
         setResultMatrix(null);
         setSolution('');
     };
+
+
+
+    const exportMatrixToFile = () => {
+        const element = document.createElement("a");
+        const fileContent = matrix.map(row => row.map(cell => cell === '' ? 0 : cell).join(' ')).join('\n');
+        const file = new Blob([fileContent], { type: 'text/plain' });
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const filename = `matrizEntrada_${timestamp}.txt`;
+        element.href = URL.createObjectURL(file);
+        element.download = filename;
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    };
+
+    const exportResultMatrixToFile = () => {
+        if (!resultMatrix) {
+            alert('No hay matriz resultante para exportar.');
+            return;
+        }
+
+        const element = document.createElement("a");
+        const fileContent = resultMatrix.map(row => row.map(cell => {
+            const fraction = new Fraction(cell);
+            return fraction.toFraction(false);
+        }).join(' ')).join('\n');
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const filename = `matrizResultante_${timestamp}.txt`;
+        const file = new Blob([fileContent], { type: 'text/plain' });
+        element.href = URL.createObjectURL(file);
+        element.download = filename;
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    };
+
 
     const solveGaussJordan = () => {
         let m = matrix.map(row => row.map(entry => parseFloat(entry) || 0));
@@ -199,6 +240,7 @@ export const MatrixProvider = ({ children }) => {
 
     return (
         <MatrixContext.Provider value={{
+            importMatrixFromFile,
             matrixSize,
             matrix,
             setMatrix,
@@ -213,7 +255,9 @@ export const MatrixProvider = ({ children }) => {
             isModalOpen,
             openModal,
             closeModal,
-            setMatrixSize
+            setMatrixSize,
+            exportMatrixToFile,
+            exportResultMatrixToFile,
         }}>
             {children}
         </MatrixContext.Provider>

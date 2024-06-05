@@ -9,18 +9,18 @@ import MatrixResults from '../components/matrices/MatrixResults';
 import MatrixSolution from '../components/matrices/MatrixSolution';
 
 const Matrices = () => {
-    const { isModalOpen, openModal, closeModal, solveGaussJordan, calculateDeterminant, calculateInverse, resetMatrix } = useMatrix();
+    const { isModalOpen, openModal, closeModal, solveGaussJordan, calculateDeterminant, calculateInverse, resetMatrix, importMatrixFromFile, exportMatrixToFile, exportResultMatrixToFile } = useMatrix();
 
-    const handleImport = () => {
-        // Lógica para importar la matriz
+    const handleImport = (file) => {
+        //Logica para importar el archivo en .txt
     };
 
     const handleSizeSelect = () => {
-        openModal(); // Abrir el modal para seleccionar tamaño
+        openModal();
     };
 
     const handleExport = () => {
-        // Lógica para exportar la matriz
+        exportMatrixToFile();
     };
 
     const handleReset = () => {
@@ -28,7 +28,7 @@ const Matrices = () => {
     };
 
     const handleExportResult = () => {
-        // Lógica para exportar el resultado
+        exportResultMatrixToFile();
     };
 
     return (
