@@ -13,7 +13,13 @@ export const MatrixProvider = ({ children }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
-        setMatrix(Array.from({ length: matrixSize.rows }, () => Array(matrixSize.columns).fill('')));
+        setMatrix(prevMatrix => {
+            // Solo restablecer la matriz si no tiene datos
+            if (prevMatrix.every(row => row.every(cell => cell === ''))) {
+                return Array.from({ length: matrixSize.rows }, () => Array(matrixSize.columns).fill(''));
+            }
+            return prevMatrix;
+        });
     }, [matrixSize]);
 
     const openModal = () => setIsModalOpen(true);
@@ -26,7 +32,18 @@ export const MatrixProvider = ({ children }) => {
         setSolution('');
     };
 
-
+    const importMatrixFromFile = (matrixData) => {
+        if (matrixData && matrixData.length > 0) {
+            const rows = matrixData.length;
+            const columns = matrixData[0].length;
+            setMatrixSize({ rows, columns });
+            setMatrix(matrixData);
+            setResultMatrix(null);
+            setSolution('');
+        } else {
+            console.error('Matrix data is invalid');
+        }
+    };
 
     const exportMatrixToFile = () => {
         const element = document.createElement("a");
@@ -61,7 +78,6 @@ export const MatrixProvider = ({ children }) => {
         element.click();
         document.body.removeChild(element);
     };
-
 
     const solveGaussJordan = () => {
         let m = matrix.map(row => row.map(entry => parseFloat(entry) || 0));
@@ -263,3 +279,5 @@ export const MatrixProvider = ({ children }) => {
         </MatrixContext.Provider>
     );
 };
+
+export default MatrixProvider;

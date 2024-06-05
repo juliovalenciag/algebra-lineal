@@ -1,18 +1,11 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import cambiarIcon from '../../assets/img/cambiar.png';
 import importarIcon from '../../assets/img/importar.png';
 import exportarIcon from '../../assets/img/exportar.png';
 import reiniciarIcon from '../../assets/img/limpiar.png';
 import exportarResultadoIcon from '../../assets/img/exportarSalida.png';
-import ImportFileModal from './ImportFileModal';
 
 const MatrixToolbar = ({ onSizeSelect, onImport, onExport, onReset, onExportResult }) => {
-    const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const toggleModal = () => {
-        setIsModalOpen(!isModalOpen);
-    };
-
     return (
         <div className='flex flex-wrap justify-center lg:justify-start space-x-2 space-y-2 lg:space-y-0 p-4 shadow-md bg-white dark:bg-dark-foreground '>
             <button onClick={onImport} className='flex flex-col lg:flex-row items-center justify-center space-x-0 lg:space-x-2 bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
@@ -39,8 +32,6 @@ const MatrixToolbar = ({ onSizeSelect, onImport, onExport, onReset, onExportResu
                 <img src={exportarResultadoIcon} alt="Exportar resultado" className='w-10 h-10 lg:w-12 lg:h-12' style={{ minWidth: '40px', minHeight: '40px' }} />
                 <span className='hidden lg:inline text-sm lg:text-base'>Exportar resultado</span>
             </button>
-
-            <ImportFileModal isOpen={isModalOpen} onClose={toggleModal} onFileSelect={onImport} />
         </div>
     );
 };
