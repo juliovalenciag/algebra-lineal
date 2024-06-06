@@ -75,40 +75,45 @@ export const MatrixProvider = ({ children }) => {
     };
 
     const solveGaussJordan = () => {
-        let m = matrix.map(row => row.map(entry => parseFloat(entry) || 0));
-        const rows = m.length;
-        const columns = m[0].length;
+        try {
+            let m = matrix.map(row => row.map(entry => new Fraction(entry || 0)));
+            const rows = m.length;
+            const columns = m[0].length;
 
-        for (let i = 0; i < Math.min(rows, columns); i++) {
-            if (m[i][i] === 0) {
-                for (let k = i + 1; k < rows; k++) {
-                    if (m[k][i] !== 0) {
-                        [m[i], m[k]] = [m[k], m[i]];
-                        break;
+            for (let i = 0; i < Math.min(rows, columns); i++) {
+                if (m[i][i].valueOf() === 0) {
+                    for (let k = i + 1; k < rows; k++) {
+                        if (m[k][i].valueOf() !== 0) {
+                            [m[i], m[k]] = [m[k], m[i]];
+                            break;
+                        }
+                    }
+                }
+
+                let pivot = m[i][i];
+                if (pivot.valueOf() === 0) continue;
+
+                for (let k = 0; k < columns; k++) {
+                    m[i][k] = m[i][k].div(pivot);
+                }
+
+                for (let j = 0; j < rows; j++) {
+                    if (j !== i) {
+                        let factor = m[j][i];
+                        for (let k = 0; k < columns; k++) {
+                            m[j][k] = m[j][k].sub(factor.mul(m[i][k]));
+                        }
                     }
                 }
             }
 
-            let pivot = m[i][i];
-            if (pivot === 0) continue;
-
-            for (let k = 0; k < columns; k++) {
-                m[i][k] /= pivot;
-            }
-
-            for (let j = 0; j < rows; j++) {
-                if (j !== i) {
-                    let factor = m[j][i];
-                    for (let k = 0; k < columns; k++) {
-                        m[j][k] -= factor * m[i][k];
-                    }
-                }
-            }
+            setResultMatrix(m);
+            displaySolution(m);
+        } catch (error) {
+            setSolution(`Error en el cálculo de Gauss-Jordan: ${error.message}`);
         }
-
-        setResultMatrix(m);
-        displaySolution(m);
     };
+
 
     const calculateDeterminant = () => {
         let m = matrix.map(row => row.map(entry => parseFloat(entry) || 0));
@@ -145,92 +150,113 @@ export const MatrixProvider = ({ children }) => {
             }
         }
 
-        setResultMatrix([[det]]);
-        displaySolution([[det]]);
+        const determinantText = `Determinante = ${det}`;
+        setSolution(determinantText);
     };
 
-    const calculateInverse = () => {
-        let m = matrix.map(row => row.map(entry => parseFloat(entry) || 0));
-        const n = m.length;
 
-        if (m.length !== m[0].length) {
-            alert("La matriz debe ser cuadrada para calcular la inversa.");
+
+    const calculateInverse = () => {
+        try {
+            let m = matrix.map(row => row.map(entry => new Fraction(entry || 0)));
+            const n = m.length;
+
+            if (m.length !== m[0].length) {
+                throw new Error("La matriz debe ser cuadrada para calcular la inversa.");
+            }
+
+            let augmentedMatrix = m.map((row, i) => [
+                ...row,
+                ...row.map((_, j) => (i === j ? new Fraction(1) : new Fraction(0)))
+            ]);
+
+            for (let i = 0; i < n; i++) {
+                if (augmentedMatrix[i][i].valueOf() === 0) {
+                    let swapRow = -1;
+                    for (let k = i + 1; k < n; k++) {
+                        if (augmentedMatrix[k][i].valueOf() !== 0) {
+                            swapRow = k;
+                            break;
+                        }
+                    }
+                    if (swapRow === -1) {
+                        throw new Error("La matriz es singular y no tiene inversa.");
+                    }
+                    [augmentedMatrix[i], augmentedMatrix[swapRow]] = [augmentedMatrix[swapRow], augmentedMatrix[i]];
+                }
+
+                let pivot = augmentedMatrix[i][i];
+                for (let j = 0; j < 2 * n; j++) {
+                    augmentedMatrix[i][j] = augmentedMatrix[i][j].div(pivot);
+                }
+
+                for (let j = 0; j < n; j++) {
+                    if (j !== i) {
+                        let factor = augmentedMatrix[j][i];
+                        for (let k = 0; k < 2 * n; k++) {
+                            augmentedMatrix[j][k] = augmentedMatrix[j][k].sub(factor.mul(augmentedMatrix[i][k]));
+                        }
+                    }
+                }
+            }
+
+            let inverseMatrix = augmentedMatrix.map(row => row.slice(n));
+            setResultMatrix(inverseMatrix);
+            setSolution('');
+        } catch (error) {
+            setSolution(`Error en el cálculo de la inversa: ${error.message}`);
+        }
+    };
+
+
+    const displaySolution = (matrix) => {
+        if (typeof matrix === 'string') {
+            setSolution(matrix);
             return;
         }
 
-        let augmentedMatrix = m.map((row, i) => [
-            ...row,
-            ...row.map((_, j) => (i === j ? 1 : 0))
-        ]);
-
-        for (let i = 0; i < n; i++) {
-            if (augmentedMatrix[i][i] === 0) {
-                let swapRow = -1;
-                for (let k = i + 1; k < n; k++) {
-                    if (augmentedMatrix[k][i] !== 0) {
-                        swapRow = k;
-                        break;
-                    }
-                }
-                if (swapRow === -1) {
-                    alert("La matriz es singular y no tiene inversa.");
-                    return;
-                }
-                [augmentedMatrix[i], augmentedMatrix[swapRow]] = [augmentedMatrix[swapRow], augmentedMatrix[i]];
-            }
-
-            let pivot = augmentedMatrix[i][i];
-            for (let j = 0; j < 2 * n; j++) {
-                augmentedMatrix[i][j] /= pivot;
-            }
-
-            for (let j = 0; j < n; j++) {
-                if (j !== i) {
-                    let factor = augmentedMatrix[j][i];
-                    for (let k = 0; k < 2 * n; k++) {
-                        augmentedMatrix[j][k] -= factor * augmentedMatrix[i][k];
-                    }
-                }
-            }
-        }
-
-        let inverseMatrix = augmentedMatrix.map(row => row.slice(n));
-        setResultMatrix(inverseMatrix);
-        setSolution('');
-    };
-
-    const displaySolution = (matrix) => {
         const rows = matrix.length;
         const columns = matrix[0].length;
         const solution_texts = [];
         let error_message = "";
 
-        const rank = matrix.reduce((acc, row) => acc + (row.slice(0, -1).some(val => val !== 0) ? 1 : 0), 0);
+        const rank = matrix.reduce((acc, row) => acc + (row.slice(0, -1).some(val => val.valueOf() !== 0) ? 1 : 0), 0);
         if (rank < rows) {
             error_message = "El sistema tiene infinitas soluciones debido a las filas cero.\n";
         }
 
+        const terminos_sin = [];
         for (let i = 0; i < rows; i++) {
-            if (matrix[i].slice(0, -1).every(val => val === 0)) {
-                if (matrix[i][columns - 1] !== 0) {
+            if (matrix[i].slice(0, -1).every(val => val.valueOf() === 0)) {
+                if (matrix[i][columns - 1].valueOf() !== 0) {
                     error_message = "Sistema inconsistente. No hay solución.\n";
                     break;
                 } else {
                     continue;
                 }
             } else {
-                let constant = new Fraction(matrix[i][columns - 1]);
-                let numerator = constant.s * constant.n;
-                let denominator = constant.d;
-                let equation;
-                if (numerator === 0) {
-                    equation = `x<sub>${i + 1}</sub> = 0`;
-                } else if (denominator === 1) {
-                    equation = `x<sub>${i + 1}</sub> = ${numerator}`;
-                } else {
-                    equation = `x<sub>${i + 1}</sub> = <span class="fraction"><span class="numerator">${numerator}</span><span class="denominator">${denominator}</span></span>`;
+                if (terminos_sin.length <= i) {
+                    terminos_sin.push([]);
                 }
-                solution_texts.push(equation);
+                const terms = [];
+                for (let j = 0; j < columns - 1; j++) {
+                    if (matrix[i][j].valueOf() !== 0) {
+                        const coefficient = matrix[i][j].toFraction(true);
+                        if (coefficient === "1") {
+                            terms.push(`x<sub>${j + 1}</sub>`);
+                            terminos_sin[i].push(`x<sub>${j + 1}</sub>`);
+                        } else if (coefficient === "-1") {
+                            terms.push(`-x<sub>${j + 1}</sub>`);
+                            terminos_sin[i].push(`-x<sub>${j + 1}</sub>`);
+                        } else {
+                            terms.push(`${coefficient}x<sub>${j + 1}</sub>`);
+                        }
+                    }
+                }
+                const constant = matrix[i][columns - 1].toFraction(true);
+                const formattedTerms = terms.slice(1).map(term => term.startsWith('-') ? ` - ${term.slice(1)}` : ` + ${term}`).join('');
+                const equation = terms[0] + " = " + formattedTerms + (constant !== "0" ? (formattedTerms ? ` + ${constant}` : constant) : '');
+                solution_texts.push(equation.replace(' + -', ' - '));
             }
         }
 
@@ -239,9 +265,51 @@ export const MatrixProvider = ({ children }) => {
             return;
         }
 
-        let solution_text = "{ ( " + Array.from({ length: columns - 1 }, (_, i) => `x<sub>${i + 1}</sub>`).join(", ") + " ) | " + solution_texts.join(", ") + " }";
+        const { soluciones_infinitas, variables } = verificador_de_variables(terminos_sin);
+        let solution_text = error_message;
+        variables.sort();
+        solution_text += `{ ( ${variables.join(',')} ) | ${solution_texts.join(', ')} }`;
+
+        if (!solution_texts.length) {
+            solution_text = "El sistema tiene infinitas soluciones (sistema indeterminado).";
+        }
+
+        if (soluciones_infinitas.length) {
+            if (soluciones_infinitas.length === 1) {
+                solution_text += `\n & ${soluciones_infinitas[0]} }`;
+            } else if (soluciones_infinitas.length === 2) {
+                solution_text += `,\n ${soluciones_infinitas[0]} & ${soluciones_infinitas[1]} }`;
+            } else {
+                solution_text += `,\n ${soluciones_infinitas.slice(0, -1).join(', ')} & ${soluciones_infinitas.slice(-1)[0]} }`;
+            }
+        } else {
+            solution_text += " }\n";
+        }
+
         setSolution(solution_text);
     };
+
+    const verificador_de_variables = (terminos_sin) => {
+        const variables_libres = [];
+        const variables = new Set();
+
+        terminos_sin.forEach((termino) => {
+            termino.forEach((variable) => {
+                if (!variables.has(variable)) {
+                    variables.add(variable);
+                    variables_libres.push(variable);
+                }
+            });
+        });
+
+        const soluciones_infinitas = variables_libres.map((variable, index) => {
+            return `${variable} = k<sub>${index + 1}</sub>`;
+        });
+
+        return { soluciones_infinitas, variables: Array.from(variables) };
+    };
+
+
 
     const resetMatrix = () => {
         setMatrix(Array.from({ length: matrixSize.rows }, () => Array(matrixSize.columns).fill('')));
