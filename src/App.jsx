@@ -2,6 +2,10 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import Navbar from './components/Navbar'
+import HeroSection from './components/homepage/HeroSection'
+import Workflow from './components/homepage/Workflow'
+import CTA from './components/homepage/CTA'
+import Footer from './components/Footer'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -9,9 +13,12 @@ function App() {
   return (
     <>
       <Navbar />
-      <h1 className="text-3xl font-bold">
-        Aquí estará la homepage, por lo mientras denle a matrices en la barra de arriba
-      </h1>
+      <div className='max-w-7xl mx-auto pt-20 px-6'>
+        <HeroSection />
+        <Workflow />
+      </div>
+      <CTA />
+      <Footer />
     </>
   )
 }

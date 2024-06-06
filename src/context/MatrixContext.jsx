@@ -12,16 +12,6 @@ export const MatrixProvider = ({ children }) => {
     const [solution, setSolution] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    useEffect(() => {
-        setMatrix(prevMatrix => {
-            // Solo restablecer la matriz si no tiene datos
-            if (prevMatrix.every(row => row.every(cell => cell === ''))) {
-                return Array.from({ length: matrixSize.rows }, () => Array(matrixSize.columns).fill(''));
-            }
-            return prevMatrix;
-        });
-    }, [matrixSize]);
-
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
@@ -44,6 +34,16 @@ export const MatrixProvider = ({ children }) => {
             console.error('Matrix data is invalid');
         }
     };
+
+    useEffect(() => {
+        // Only reset the matrix if all cells are empty
+        setMatrix(prevMatrix => {
+            if (prevMatrix.every(row => row.every(cell => cell === ''))) {
+                return Array.from({ length: matrixSize.rows }, () => Array(matrixSize.columns).fill(''));
+            }
+            return prevMatrix;
+        });
+    }, [matrixSize]);
 
     const exportMatrixToFile = () => {
         const element = document.createElement("a");
