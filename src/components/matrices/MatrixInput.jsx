@@ -18,8 +18,8 @@ const MatrixInput = () => {
     }, [rows, columns, setMatrix]);
 
     const handleInputChange = (value, rowIndex, colIndex) => {
-        const isValidFraction = /^-?\d*\/?\d*$/.test(value);
-        if (!isValidFraction) return;
+        const isValid = /^-?\d*\.?\d*\/?\d*$/.test(value);
+        if (!isValid) return;
 
         const newMatrix = matrix.map((row, i) =>
             row.map((val, j) => (i === rowIndex && j === colIndex ? value : val))
@@ -70,14 +70,16 @@ const MatrixInput = () => {
 
     return (
         <div className='relative flex flex-col items-center shadow-lg rounded-md bg-gray-100 p-5 w-full h-full'>
-            <h2 className='text-2xl font-semibold mb-4'>Entrada de Matriz</h2>
-            <div className="absolute top-4 left-4 flex space-x-2">
-                <button onClick={handleZoomOut} className="bg-primary text-white p-2 rounded">
-                    <FaMinus />
-                </button>
-                <button onClick={handleZoomIn} className="bg-primary text-white p-2 rounded">
-                    <FaPlus />
-                </button>
+            <div className="flex items-center justify-between w-full mb-4">
+                <div className="flex space-x-2">
+                    <button onClick={handleZoomOut} className="bg-primary text-white p-2 rounded">
+                        <FaMinus />
+                    </button>
+                    <button onClick={handleZoomIn} className="bg-primary text-white p-2 rounded">
+                        <FaPlus />
+                    </button>
+                </div>
+                
             </div>
 
             <div
