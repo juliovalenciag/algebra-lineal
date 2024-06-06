@@ -98,40 +98,42 @@ const MatrixSizeModal = ({ isOpen, onClose }) => {
                                 <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 dark:text-white">
                                     Ajustar Tamaño de la Matriz
                                 </Dialog.Title>
-                                <div className="mt-4 flex justify-between items-center">
-                                    <div className="flex items-center space-x-2">
-                                        <label className="text-gray-700 dark:text-gray-300 mr-2">Filas:</label>
-                                        <input
-                                            type="number"
-                                            value={tempSize.rows}
-                                            min="1"
-                                            onChange={(e) => setTempSize(prevSize => ({ ...prevSize, rows: Math.max(Number(e.target.value), 1) }))}
-                                            className="bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100 p-2 rounded"
-                                        />
+                                <div className="mt-4 flex flex-col items-center space-y-4">
+                                    <div className="flex flex-col md:flex-row md:space-x-4 w-full justify-center items-center">
+                                        <div className="flex items-center space-x-2 mb-4 md:mb-0">
+                                            <label className="text-gray-700 dark:text-gray-300 mr-2">Filas:</label>
+                                            <input
+                                                type="number"
+                                                value={tempSize.rows}
+                                                min="1"
+                                                onChange={(e) => setTempSize(prevSize => ({ ...prevSize, rows: Math.max(Number(e.target.value), 1) }))}
+                                                className="bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100 p-2 rounded"
+                                            />
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <label className="text-gray-700 dark:text-gray-300 mr-2">Columnas:</label>
+                                            <input
+                                                type="number"
+                                                value={tempSize.columns}
+                                                min="1"
+                                                onChange={(e) => setTempSize(prevSize => ({ ...prevSize, columns: Math.max(Number(e.target.value), 1) }))}
+                                                className="bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100 p-2 rounded"
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                        <label className="text-gray-700 dark:text-gray-300 mr-2">Columnas:</label>
-                                        <input
-                                            type="number"
-                                            value={tempSize.columns}
-                                            min="1"
-                                            onChange={(e) => setTempSize(prevSize => ({ ...prevSize, columns: Math.max(Number(e.target.value), 1) }))}
-                                            className="bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100 p-2 rounded"
-                                        />
+                                    <div
+                                        className="mt-4 flex justify-center items-center border border-gray-300 p-4 rounded-lg bg-gray-50 dark:bg-gray-700 relative"
+                                        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+                                    >
+                                        {renderMatrix()}
                                     </div>
                                     <button
                                         type="button"
-                                        className="inline-flex justify-center rounded-md border border-transparent bg-blue-100 dark:bg-blue-600 px-4 py-2 text-sm font-medium text-blue-900 dark:text-white hover:bg-blue-200 dark:hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                                        className="mt-4 inline-flex justify-center rounded-md border border-transparent bg-blue-100 dark:bg-blue-600 px-4 py-2 text-sm font-medium text-blue-900 dark:text-white hover:bg-blue-200 dark:hover:bg-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                                         onClick={handleAccept}
                                     >
                                         Aceptar
                                     </button>
-                                </div>
-                                <div
-                                    className="mt-4 flex justify-center items-center border border-gray-300 p-4 rounded-lg bg-gray-50 dark:bg-gray-700 relative"
-                                    style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-                                >
-                                    {renderMatrix()}
                                 </div>
                             </Dialog.Panel>
                         </Transition.Child>
