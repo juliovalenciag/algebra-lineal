@@ -1,69 +1,64 @@
-import React, { useState, useRef, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { useMatrix } from '../../context/MatrixContext';
 
 const MatrixSizeModal = ({ isOpen, onClose }) => {
     const { matrixSize, updateMatrixSize } = useMatrix();
     const [tempSize, setTempSize] = useState(matrixSize);
-    const containerRef = useRef(null);
-    const [isDragging, setIsDragging] = useState(false);
-    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+    const [isSelecting, setIsSelecting] = useState(false);
 
     useEffect(() => {
         setTempSize(matrixSize);
     }, [matrixSize]);
-
-    const handleMouseDown = (e) => {
-        setIsDragging(true);
-        setDragStart({ x: e.clientX, y: e.clientY });
-    };
-
-    const handleMouseMove = (e) => {
-        if (!isDragging) return;
-        const dx = e.clientX - dragStart.x;
-        const dy = e.clientY - dragStart.y;
-        const cellSize = 50; // Tamaño de cada celda
-        const newRows = Math.max(tempSize.rows + Math.round(dy / cellSize), 1);
-        const newColumns = Math.max(tempSize.columns + Math.round(dx / cellSize), 1);
-        setTempSize({ rows: newRows, columns: newColumns });
-        setDragStart({ x: e.clientX, y: e.clientY });
-    };
-
-    const handleMouseUp = () => {
-        setIsDragging(false);
-    };
 
     const handleAccept = () => {
         updateMatrixSize(tempSize.rows, tempSize.columns);
         onClose();
     };
 
+    const handleSelectChange = (e) => {
+        const { name, value } = e.target;
+        setTempSize((prevSize) => ({
+            ...prevSize,
+            [name]: Number(value),
+        }));
+    };
+
+    const handleCellMouseDown = (row, col) => {
+        setIsSelecting(true);
+        setTempSize({ rows: row + 1, columns: col + 1 });
+    };
+
+    const handleCellMouseOver = (row, col) => {
+        if (isSelecting) {
+            setTempSize({ rows: row + 1, columns: col + 1 });
+        }
+    };
+
+    const handleMouseUp = () => {
+        setIsSelecting(false);
+    };
+
     const renderMatrix = () => {
+        const totalRows = 12;
+        const totalCols = 12;
         const { rows, columns } = tempSize;
         return (
             <div
-                className="grid"
-                style={{
-                    gridTemplateColumns: `repeat(${columns}, 50px)`,
-                    gridTemplateRows: `repeat(${rows}, 50px)`,
-                    gap: '5px',
-                    position: 'relative'
-                }}
-                ref={containerRef}
-                onMouseMove={handleMouseMove}
+                className="grid grid-cols-12 gap-1"
                 onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
             >
-                {Array.from({ length: rows * columns }).map((_, index) => (
-                    <div
-                        key={index}
-                        className="w-12 h-12 border border-gray-300 flex items-center justify-center bg-gray-100"
-                    />
+                {Array.from({ length: totalRows }).map((_, row) => (
+                    Array.from({ length: totalCols }).map((_, col) => (
+                        <div
+                            key={`${row}-${col}`}
+                            className={`w-8 h-8 flex items-center justify-center cursor-pointer
+                                ${row < rows && col < columns ? 'bg-blue-500' : 'bg-gray-200'}`}
+                            onMouseDown={() => handleCellMouseDown(row, col)}
+                            onMouseOver={() => handleCellMouseOver(row, col)}
+                        />
+                    ))
                 ))}
-                <div
-                    className="absolute bottom-0 right-0 w-4 h-4 bg-red-500 cursor-se-resize"
-                    onMouseDown={handleMouseDown}
-                />
             </div>
         );
     };
@@ -84,7 +79,7 @@ const MatrixSizeModal = ({ isOpen, onClose }) => {
                 </Transition.Child>
 
                 <div className="fixed inset-0 overflow-y-auto">
-                    <div className="flex min-h-full items-center justify-center p-4 text-center">
+                    <div className="flex min-h-full items-center justify-center p-4 text-center mt-10">
                         <Transition.Child
                             as={Fragment}
                             enter="ease-out duration-300"
@@ -94,37 +89,43 @@ const MatrixSizeModal = ({ isOpen, onClose }) => {
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-6 text-left align-middle shadow-xl transition-all">
+                            <Dialog.Panel className="w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 p-4 text-left align-middle shadow-xl transition-all">
                                 <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900 dark:text-white">
                                     Ajustar Tamaño de la Matriz
                                 </Dialog.Title>
-                                <div className="mt-4 flex flex-col items-center space-y-4">
+                                <div className="mt-4 flex flex-col items-center space-y-2">
                                     <div className="flex flex-col md:flex-row md:space-x-4 w-full justify-center items-center">
                                         <div className="flex items-center space-x-2 mb-4 md:mb-0">
                                             <label className="text-gray-700 dark:text-gray-300 mr-2">Filas:</label>
-                                            <input
-                                                type="number"
+                                            <select
+                                                name="rows"
                                                 value={tempSize.rows}
-                                                min="1"
-                                                onChange={(e) => setTempSize(prevSize => ({ ...prevSize, rows: Math.max(Number(e.target.value), 1) }))}
+                                                onChange={handleSelectChange}
                                                 className="bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100 p-2 rounded"
-                                            />
+                                            >
+                                                {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                                                    <option key={num} value={num}>{num}</option>
+                                                ))}
+                                            </select>
                                         </div>
                                         <div className="flex items-center space-x-2">
                                             <label className="text-gray-700 dark:text-gray-300 mr-2">Columnas:</label>
-                                            <input
-                                                type="number"
+                                            <select
+                                                name="columns"
                                                 value={tempSize.columns}
-                                                min="1"
-                                                onChange={(e) => setTempSize(prevSize => ({ ...prevSize, columns: Math.max(Number(e.target.value), 1) }))}
+                                                onChange={handleSelectChange}
                                                 className="bg-gray-200 dark:bg-gray-600 text-gray-900 dark:text-gray-100 p-2 rounded"
-                                            />
+                                            >
+                                                {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                                                    <option key={num} value={num}>{num}</option>
+                                                ))}
+                                            </select>
                                         </div>
                                     </div>
-                                    <div
-                                        className="mt-4 flex justify-center items-center border border-gray-300 p-4 rounded-lg bg-gray-50 dark:bg-gray-700 relative"
-                                        style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-                                    >
+                                    <div className="text-gray-700 dark:text-gray-300 mb-4">
+                                        Filas: {tempSize.rows}, Columnas: {tempSize.columns}
+                                    </div>
+                                    <div className="border border-gray-300 p-2 rounded-lg bg-gray-50 dark:bg-gray-700 relative overflow-x-auto">
                                         {renderMatrix()}
                                     </div>
                                     <button

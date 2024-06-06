@@ -116,42 +116,45 @@ export const MatrixProvider = ({ children }) => {
 
 
     const calculateDeterminant = () => {
-        let m = matrix.map(row => row.map(entry => parseFloat(entry) || 0));
-        const n = m.length;
+        try {
+            let m = matrix.map(row => row.map(entry => parseFloat(entry) || 0));
+            const n = m.length;
 
-        if (m.length !== m[0].length) {
-            alert("La matriz debe ser cuadrada para calcular el determinante.");
-            return;
-        }
+            if (m.length !== m[0].length) {
+                throw new Error("La matriz debe ser cuadrada para calcular el determinante.");
+            }
 
-        let det = 1;
-        for (let i = 0; i < n; i++) {
-            if (m[i][i] === 0) {
-                let swapRow = -1;
-                for (let k = i + 1; k < n; k++) {
-                    if (m[k][i] !== 0) {
-                        swapRow = k;
+            let det = 1;
+            for (let i = 0; i < n; i++) {
+                if (m[i][i] === 0) {
+                    let swapRow = -1;
+                    for (let k = i + 1; k < n; k++) {
+                        if (m[k][i] !== 0) {
+                            swapRow = k;
+                            break;
+                        }
+                    }
+                    if (swapRow === -1) {
+                        det = 0;
                         break;
                     }
+                    [m[i], m[swapRow]] = [m[swapRow], m[i]];
+                    det *= -1;
                 }
-                if (swapRow === -1) {
-                    det = 0;
-                    break;
-                }
-                [m[i], m[swapRow]] = [m[swapRow], m[i]];
-                det *= -1;
-            }
-            det *= m[i][i];
-            for (let j = i + 1; j < n; j++) {
-                let factor = m[j][i] / m[i][i];
-                for (let k = i; k < n; k++) {
-                    m[j][k] -= factor * m[i][k];
+                det *= m[i][i];
+                for (let j = i + 1; j < n; j++) {
+                    let factor = m[j][i] / m[i][i];
+                    for (let k = i; k < n; k++) {
+                        m[j][k] -= factor * m[i][k];
+                    }
                 }
             }
-        }
 
-        const determinantText = `Determinante = ${det}`;
-        setSolution(determinantText);
+            const determinantText = `Determinante = ${det}`;
+            setSolution(determinantText);
+        } catch (error) {
+            alert(`Error en el cálculo del determinante: ${error.message}`);
+        }
     };
 
 
@@ -204,7 +207,7 @@ export const MatrixProvider = ({ children }) => {
             setResultMatrix(inverseMatrix);
             setSolution('');
         } catch (error) {
-            setSolution(`Error en el cálculo de la inversa: ${error.message}`);
+            alert(`Error en el cálculo de la inversa: ${error.message}`);
         }
     };
 
@@ -241,7 +244,7 @@ export const MatrixProvider = ({ children }) => {
                 const terms = [];
                 for (let j = 0; j < columns - 1; j++) {
                     if (matrix[i][j].valueOf() !== 0) {
-                        const coefficient = matrix[i][j].toFraction(true);
+                        const coefficient = matrix[i][j].toFraction(false); // false to ensure improper fractions
                         if (coefficient === "1") {
                             terms.push(`x<sub>${j + 1}</sub>`);
                             terminos_sin[i].push(`x<sub>${j + 1}</sub>`);
@@ -253,10 +256,20 @@ export const MatrixProvider = ({ children }) => {
                         }
                     }
                 }
-                const constant = matrix[i][columns - 1].toFraction(true);
+                const constant = matrix[i][columns - 1].toFraction(false); // false to ensure improper fractions
                 const formattedTerms = terms.slice(1).map(term => term.startsWith('-') ? ` - ${term.slice(1)}` : ` + ${term}`).join('');
                 const equation = terms[0] + " = " + formattedTerms + (constant !== "0" ? (formattedTerms ? ` + ${constant}` : constant) : '');
                 solution_texts.push(equation.replace(' + -', ' - '));
+            }
+        }
+
+        // Handle the zero case
+        for (let i = 0; i < solution_texts.length; i++) {
+            if (solution_texts[i].includes(" = ")) {
+                const parts = solution_texts[i].split(" = ");
+                if (parts[1].trim() === "") {
+                    solution_texts[i] = parts[0] + " = 0";
+                }
             }
         }
 
@@ -287,7 +300,7 @@ export const MatrixProvider = ({ children }) => {
         }
 
         setSolution(solution_text);
-    };
+    }
 
     const verificador_de_variables = (terminos_sin) => {
         const variables_libres = [];
