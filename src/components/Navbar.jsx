@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { MdOutlineMenu } from "react-icons/md";
 import { IoMdClose } from "react-icons/io";
 import { useTheme } from '../context/ThemeContext';
+import logo from '../assets/img/logoGJ.png';
 
 const Navbar = () => {
     const [toggle, setToggle] = useState(false);
@@ -16,6 +17,7 @@ const Navbar = () => {
             <div className='w-full h-[80px] border-b dark:border-gray-700'>
                 <div className='md:max-w-[1480px] max-w-[600px] mx-auto w-full h-full flex justify-between items-center px-4'>
                     <div className='flex items-center'>
+                        <img src={logo} alt="Logo" className="h-12 mr-4" />
                         <h1 className="text-2xl font-bold text-white dark:text-background-light">Álgebra Lineal</h1>
                     </div>
                     <div className='hidden md:flex items-center'>
@@ -25,11 +27,8 @@ const Navbar = () => {
                             <li className="text-white dark:text-background-light"><Link to='/espacios-vectoriales'>Espacios Vectoriales</Link></li>
                         </ul>
                     </div>
-                    <div className='md:flex items-center gap-4'>
-                        <button onClick={toggleTheme} className="text-white dark:text-background-light">
-                            {theme === 'dark' ? '🌞' : '🌙'}
-                        </button>
-                        <div className='md:hidden' onClick={handleClick}>
+                    <div className='md:hidden flex items-center'>
+                        <div onClick={handleClick}>
                             {toggle ? <IoMdClose className="text-white" size={24} /> : <MdOutlineMenu className="text-white" size={24} />}
                         </div>
                     </div>

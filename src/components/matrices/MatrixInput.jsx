@@ -7,8 +7,11 @@ const MatrixInput = () => {
     const { matrixSize, matrix, setMatrix } = useMatrix();
     const { rows, columns } = matrixSize;
     const matrixRef = useRef(null);
+    const containerRef = useRef(null);
 
     const [zoom, setZoom] = useState(1);
+    const [isPanning, setIsPanning] = useState(false);
+    const [panStart, setPanStart] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
         setMatrix(Array.from({ length: rows }, () => Array(columns).fill('')));
@@ -30,6 +33,24 @@ const MatrixInput = () => {
 
     const handleZoomOut = () => {
         setZoom(prevZoom => Math.max(prevZoom - 0.1, 0.5));
+    };
+
+    const handleMouseDown = (e) => {
+        setIsPanning(true);
+        setPanStart({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseMove = (e) => {
+        if (!isPanning) return;
+        const dx = e.clientX - panStart.x;
+        const dy = e.clientY - panStart.y;
+        containerRef.current.scrollLeft -= dx;
+        containerRef.current.scrollTop -= dy;
+        setPanStart({ x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseUp = () => {
+        setIsPanning(false);
     };
 
     const entryWidth = Math.max(40, (600 / Math.max(columns, 10)) * zoom);
@@ -59,9 +80,25 @@ const MatrixInput = () => {
                 </button>
             </div>
 
-            <div className="relative w-full h-full overflow-auto" ref={matrixRef}>
+            <div
+                className="relative w-full h-full overflow-auto"
+                ref={containerRef}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseUp={handleMouseUp}
+                onMouseLeave={handleMouseUp}
+                style={{ cursor: isPanning ? 'grabbing' : 'grab' }}
+            >
                 <div className="flex justify-center items-center overflow-auto">
-                    <div className="relative flex items-center matrix-wrapper" style={{ padding: `${padding}px`, margin: `${margin}px` }}>
+                    <div
+                        className="relative flex items-center matrix-wrapper"
+                        style={{
+                            padding: `${padding}px`,
+                            margin: `0px`,
+                            transform: `scale(${zoom})`,
+                            transformOrigin: 'top left'
+                        }}
+                    >
                         <div className="absolute left-0 top-0 flex flex-col justify-between z-10"
                             style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
                             <div className={`${bracketColor} border-l-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>

@@ -2,6 +2,8 @@
     padding: 10px;
     display: inline-block;
     position: relative;
+    overflow: auto;
+    cursor: grab;
 }
 
 input[type="number"],
@@ -16,6 +18,14 @@ input[type="number"],
     max-height: 500px;
     /* Ajuste para manejar matrices grandes */
     max-width: 100%;
+}
+
+.matrix-wrapper:active {
+    cursor: grabbing;
+}
+
+.matrix-grid input {
+    text-align: center;
 }
 
 .bracket-wrapper {
