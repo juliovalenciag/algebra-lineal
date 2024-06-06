@@ -14,6 +14,7 @@ const Matrices = () => {
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
 
     const handleImport = (matrixData) => {
+        resetMatrix();
         importMatrixFromFile(matrixData);
     };
 
@@ -40,14 +41,13 @@ const Matrices = () => {
     const handleFileSelect = (content) => {
         const rows = content.trim().split('\n');
         const matrix = rows.map(row => row.split(' ').map(cell => {
-            // Convert fraction string to float if needed
             if (cell.includes('/')) {
                 const [numerator, denominator] = cell.split('/');
                 return parseFloat(numerator) / parseFloat(denominator);
             }
             return parseFloat(cell);
         }));
-        handleImport(matrix);
+        importMatrixFromFile(matrix);
         toggleImportModal();
     };
 

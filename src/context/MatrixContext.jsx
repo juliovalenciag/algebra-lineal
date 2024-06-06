@@ -27,23 +27,18 @@ export const MatrixProvider = ({ children }) => {
             const rows = matrixData.length;
             const columns = matrixData[0].length;
             setMatrixSize({ rows, columns });
-            setMatrix(matrixData);
-            setResultMatrix(null);
-            setSolution('');
+
+            // Asegúrate de que los datos se actualicen después de cambiar el tamaño
+            setTimeout(() => {
+                setMatrix(matrixData);
+                setResultMatrix(null);
+                setSolution('');
+            }, 0);
         } else {
             console.error('Matrix data is invalid');
         }
     };
 
-    useEffect(() => {
-        // Only reset the matrix if all cells are empty
-        setMatrix(prevMatrix => {
-            if (prevMatrix.every(row => row.every(cell => cell === ''))) {
-                return Array.from({ length: matrixSize.rows }, () => Array(matrixSize.columns).fill(''));
-            }
-            return prevMatrix;
-        });
-    }, [matrixSize]);
 
     const exportMatrixToFile = () => {
         const element = document.createElement("a");
