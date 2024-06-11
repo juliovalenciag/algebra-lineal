@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useMatrix } from '../../context/MatrixContext';
-import { FaPlus, FaMinus } from 'react-icons/fa';
+import { BiSolidZoomOut, BiSolidZoomIn } from "react-icons/bi";
 import './MatrixInput.css';
 
 const MatrixInput = () => {
@@ -71,12 +71,12 @@ const MatrixInput = () => {
     return (
         <div className='relative flex flex-col items-center shadow-lg rounded-md bg-gray-100 p-5 w-full h-full'>
             <div className="flex items-center justify-between w-full mb-4">
-                <div className="flex space-x-2">
+                <div className="flex space-x-1">
                     <button onClick={handleZoomOut} className="bg-primary text-white p-2 rounded">
-                        <FaMinus />
+                        <BiSolidZoomOut />
                     </button>
                     <button onClick={handleZoomIn} className="bg-primary text-white p-2 rounded">
-                        <FaPlus />
+                        <BiSolidZoomIn />
                     </button>
                 </div>
                 
