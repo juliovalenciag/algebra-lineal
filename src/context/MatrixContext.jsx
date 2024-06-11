@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import Fraction from 'fraction.js';
+import { evaluate, simplify, parse } from 'mathjs'; 
 
 const MatrixContext = createContext();
 
@@ -27,18 +28,15 @@ export const MatrixProvider = ({ children }) => {
             const rows = matrixData.length;
             const columns = matrixData[0].length;
             setMatrixSize({ rows, columns });
-
-            // Asegúrate de que los datos se actualicen después de cambiar el tamaño
             setTimeout(() => {
                 setMatrix(matrixData);
                 setResultMatrix(null);
                 setSolution('');
             }, 0);
         } else {
-            console.error('Matrix data is invalid');
+            console.error('Datos de matriz invalidos');
         }
     };
-
 
     const exportMatrixToFile = () => {
         const element = document.createElement("a");

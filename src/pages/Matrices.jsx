@@ -8,10 +8,13 @@ import MatrixSizeModal from '../components/matrices/MatrixSizeModal';
 import MatrixResults from '../components/matrices/MatrixResults';
 import MatrixSolution from '../components/matrices/MatrixSolution';
 import ImportFileModal from '../components/matrices/ImportFileModal';
+import OnScreenKeyboard from '../components/matrices/OnScreenKeyboard';
 
 const Matrices = () => {
-    const { isModalOpen, openModal, closeModal, solveGaussJordan, calculateDeterminant, calculateInverse, resetMatrix, importMatrixFromFile, exportMatrixToFile, exportResultMatrixToFile } = useMatrix();
+    const { matrix, matrixSize, setMatrix, isModalOpen, openModal, closeModal, solveGaussJordan, calculateDeterminant, calculateInverse, resetMatrix, importMatrixFromFile, exportMatrixToFile, exportResultMatrixToFile } = useMatrix();
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    const [showKeyboard, setShowKeyboard] = useState(false);
+    const [activeCell, setActiveCell] = useState(null);
 
     const handleImport = (matrixData) => {
         resetMatrix();
@@ -51,6 +54,30 @@ const Matrices = () => {
         toggleImportModal();
     };
 
+    const handleKeyPress = (key) => {
+        if (activeCell) {
+            const { rowIndex, colIndex } = activeCell;
+            let newValue = matrix[rowIndex][colIndex] + key;
+            if (['sin', 'cos', 'tan', 'cot', 'sec', 'csc', 'sinh', 'cosh', 'tanh', 'coth', 'sech', 'csch'].includes(key)) {
+                newValue = `${key}(`;
+            }
+            const newMatrix = matrix.map((row, i) =>
+                row.map((val, j) => (i === rowIndex && j === colIndex ? newValue : val))
+            );
+            setMatrix(newMatrix);
+        }
+    };
+
+    const handleTab = () => {
+        if (activeCell) {
+            const { rowIndex, colIndex } = activeCell;
+            const newColIndex = colIndex + 1 < matrixSize.columns ? colIndex + 1 : 0;
+            const newRowIndex = newColIndex === 0 ? (rowIndex + 1) % matrixSize.rows : rowIndex;
+            setActiveCell({ rowIndex: newRowIndex, colIndex: newColIndex });
+            document.querySelector(`#matrix-cell-${newRowIndex}-${newColIndex}`).focus();
+        }
+    };
+
     return (
         <>
             <Navbar />
@@ -64,17 +91,18 @@ const Matrices = () => {
             <MatrixSizeModal isOpen={isModalOpen} onClose={closeModal} />
             <ImportFileModal isOpen={isImportModalOpen} onClose={toggleImportModal} onFileSelect={handleFileSelect} />
             <div className='grid grid-cols-12 gap-4 p-4'>
-                <div className='col-span-12 lg:col-span-5 flex items-center justify-center  p-4'>
-                    <MatrixInput />
+                <div className='col-span-12 lg:col-span-5 flex flex-col items-center justify-center p-4'>
+                    {showKeyboard && <OnScreenKeyboard onKeyPress={handleKeyPress} onClose={() => setShowKeyboard(false)} />}
+                    <MatrixInput onShowKeyboard={() => setShowKeyboard(true)} setActiveCell={setActiveCell} activeCell={activeCell} onTab={handleTab} />
                 </div>
-                <div className="col-span-12 lg:col-span-2 flex flex-col items-center justify-center  text-white p-4">
+                <div className="col-span-12 lg:col-span-2 flex flex-col items-center justify-center text-white p-4">
                     <MethodButtons
                         onGaussJordan={solveGaussJordan}
                         onDeterminante={calculateDeterminant}
                         onInversa={calculateInverse}
                     />
                 </div>
-                <div className="col-span-12 lg:col-span-5 flex flex-col items-center justify-start  p-4 space-y-4">
+                <div className="col-span-12 lg:col-span-5 flex flex-col items-center justify-start p-4 space-y-4">
                     <MatrixSolution />
                     <MatrixResults />
                 </div>

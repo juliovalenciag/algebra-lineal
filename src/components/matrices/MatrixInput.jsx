@@ -1,9 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useMatrix } from '../../context/MatrixContext';
 import { BiSolidZoomOut, BiSolidZoomIn } from "react-icons/bi";
+import { MdKeyboardAlt } from "react-icons/md";
 import './MatrixInput.css';
 
-const MatrixInput = () => {
+const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
     const { matrixSize, matrix, setMatrix } = useMatrix();
     const { rows, columns } = matrixSize;
     const matrixRef = useRef(null);
@@ -18,9 +19,6 @@ const MatrixInput = () => {
     }, [rows, columns, setMatrix]);
 
     const handleInputChange = (value, rowIndex, colIndex) => {
-        const isValid = /^-?\d*\.?\d*\/?\d*$/.test(value);
-        if (!isValid) return;
-
         const newMatrix = matrix.map((row, i) =>
             row.map((val, j) => (i === rowIndex && j === colIndex ? value : val))
         );
@@ -78,8 +76,11 @@ const MatrixInput = () => {
                     <button onClick={handleZoomIn} className="bg-primary text-white p-2 rounded">
                         <BiSolidZoomIn />
                     </button>
+                    <button onClick={onShowKeyboard} className="bg-primary text-white p-2 rounded">
+                        <MdKeyboardAlt />
+                    </button>
+                    <button onClick={onTab} className="bg-primary text-white p-2 rounded text-xs ">Tab</button>
                 </div>
-                
             </div>
 
             <div
@@ -123,9 +124,11 @@ const MatrixInput = () => {
                                         <input
                                             key={colIndex}
                                             className={`p-2 border rounded ${colIndex === constantTermColumn ? bgColorConstant : bgColorDefault}`}
+                                            id={`matrix-cell-${rowIndex}-${colIndex}`}
                                             type="text"
                                             value={value}
                                             onChange={(e) => handleInputChange(e.target.value, rowIndex, colIndex)}
+                                            onFocus={() => setActiveCell({ rowIndex, colIndex })}
                                             style={{ width: `${entryWidth}px`, height: `${entryHeight}px` }}
                                         />
                                     ))}

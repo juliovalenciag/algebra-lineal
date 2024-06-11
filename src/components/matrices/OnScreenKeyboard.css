@@ -1,0 +1,21 @@
+.onscreen-keyboard {
+    max-width: 100%;
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.onscreen-keyboard .grid {
+    grid-template-columns: repeat(6, minmax(30px, 1fr));
+}
+
+.onscreen-keyboard button {
+    min-width: 30px;
+    min-height: 30px;
+}
+
+@media (min-width: 640px) {
+    .onscreen-keyboard .grid {
+        grid-template-columns: repeat(10, minmax(30px, 1fr));
+    }
+}
