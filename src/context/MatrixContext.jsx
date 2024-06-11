@@ -1,6 +1,6 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import Fraction from 'fraction.js';
-import { evaluate, simplify, parse } from 'mathjs'; 
+import { evaluate, parse } from 'mathjs';
 
 const MatrixContext = createContext();
 
@@ -72,9 +72,20 @@ export const MatrixProvider = ({ children }) => {
         document.body.removeChild(element);
     };
 
+    const parseAndEvaluateMatrix = (matrix) => {
+        return matrix.map(row => row.map(cell => {
+            try {
+                return evaluate(cell);
+            } catch (error) {
+                console.error(`Error evaluando el valor de la celda "${cell}": ${error.message}`);
+                return 0;
+            }
+        }));
+    };
+
     const solveGaussJordan = () => {
         try {
-            let m = matrix.map(row => row.map(entry => new Fraction(entry || 0)));
+            let m = parseAndEvaluateMatrix(matrix).map(row => row.map(entry => new Fraction(entry || 0)));
             const rows = m.length;
             const columns = m[0].length;
 
@@ -112,10 +123,9 @@ export const MatrixProvider = ({ children }) => {
         }
     };
 
-
     const calculateDeterminant = () => {
         try {
-            let m = matrix.map(row => row.map(entry => parseFloat(entry) || 0));
+            let m = parseAndEvaluateMatrix(matrix);
             const n = m.length;
 
             if (m.length !== m[0].length) {
@@ -155,11 +165,9 @@ export const MatrixProvider = ({ children }) => {
         }
     };
 
-
-
     const calculateInverse = () => {
         try {
-            let m = matrix.map(row => row.map(entry => new Fraction(entry || 0)));
+            let m = parseAndEvaluateMatrix(matrix).map(row => row.map(entry => new Fraction(entry || 0)));
             const n = m.length;
 
             if (m.length !== m[0].length) {
@@ -208,7 +216,6 @@ export const MatrixProvider = ({ children }) => {
             alert(`Error en el cálculo de la inversa: ${error.message}`);
         }
     };
-
 
     const displaySolution = (matrix) => {
         if (typeof matrix === 'string') {
@@ -319,8 +326,6 @@ export const MatrixProvider = ({ children }) => {
 
         return { soluciones_infinitas, variables: Array.from(variables) };
     };
-
-
 
     const resetMatrix = () => {
         setMatrix(Array.from({ length: matrixSize.rows }, () => Array(matrixSize.columns).fill('')));

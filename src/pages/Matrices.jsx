@@ -11,7 +11,12 @@ import ImportFileModal from '../components/matrices/ImportFileModal';
 import OnScreenKeyboard from '../components/matrices/OnScreenKeyboard';
 
 const Matrices = () => {
-    const { matrix, matrixSize, setMatrix, isModalOpen, openModal, closeModal, solveGaussJordan, calculateDeterminant, calculateInverse, resetMatrix, importMatrixFromFile, exportMatrixToFile, exportResultMatrixToFile } = useMatrix();
+    const {
+        isModalOpen, openModal, closeModal, solveGaussJordan,
+        calculateDeterminant, calculateInverse, resetMatrix,
+        importMatrixFromFile, exportMatrixToFile, exportResultMatrixToFile,
+        matrix, matrixSize, setMatrix
+    } = useMatrix();
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [showKeyboard, setShowKeyboard] = useState(false);
     const [activeCell, setActiveCell] = useState(null);
@@ -58,7 +63,7 @@ const Matrices = () => {
         if (activeCell) {
             const { rowIndex, colIndex } = activeCell;
             let newValue = matrix[rowIndex][colIndex] + key;
-            if (['sin', 'cos', 'tan', 'cot', 'sec', 'csc', 'sinh', 'cosh', 'tanh', 'coth', 'sech', 'csch'].includes(key)) {
+            if (key === 'sin' || key === 'cos' || key === 'tan' || key === 'cot' || key === 'sec' || key === 'csc' || key === 'sinh' || key === 'cosh' || key === 'tanh' || key === 'coth' || key === 'sech' || key === 'csch') {
                 newValue = `${key}(`;
             }
             const newMatrix = matrix.map((row, i) =>

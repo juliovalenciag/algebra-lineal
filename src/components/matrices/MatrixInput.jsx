@@ -123,8 +123,8 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
                                     {row.map((value, colIndex) => (
                                         <input
                                             key={colIndex}
-                                            className={`p-2 border rounded ${colIndex === constantTermColumn ? bgColorConstant : bgColorDefault}`}
                                             id={`matrix-cell-${rowIndex}-${colIndex}`}
+                                            className={`p-2 border rounded ${colIndex === constantTermColumn ? bgColorConstant : bgColorDefault}`}
                                             type="text"
                                             value={value}
                                             onChange={(e) => handleInputChange(e.target.value, rowIndex, colIndex)}
