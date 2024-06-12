@@ -13,12 +13,86 @@ export const MatrixProvider = ({ children }) => {
     const [solution, setSolution] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
 
+    const [matrixA, setMatrixA] = useState([]);
+    const [matrixB, setMatrixB] = useState([]);
+    const [showLinearSystem, setShowLinearSystem] = useState(false);
+
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
     const updateMatrixSize = (rows, columns) => {
         setMatrixSize({ rows, columns });
         setMatrix(Array.from({ length: rows }, () => Array(columns).fill('')));
+        setResultMatrix(null);
+        setSolution('');
+        setShowLinearSystem(false); 
+    };
+
+    const updateLinearSystemDimensions = (sizeA, columnsB) => {
+        const matrixA = Array.from({ length: sizeA }, () => Array(sizeA).fill(''));
+        const matrixB = Array.from({ length: sizeA }, () => Array(columnsB).fill(''));
+        setMatrixA(matrixA);
+        setMatrixB(matrixB);
+        setShowLinearSystem(true);
+    };
+
+    const solveLinearSystem = () => {
+        try {
+            const n = matrixA.length;
+            const m = matrixB[0].length;
+
+            let augmentedMatrix = matrixA.map((row, i) => [
+                ...row.map(entry => new Fraction(entry || 0)),
+                ...matrixB[i].map(entry => new Fraction(entry || 0))
+            ]);
+
+            for (let i = 0; i < n; i++) {
+                if (augmentedMatrix[i][i].valueOf() === 0) {
+                    let swapRow = -1;
+                    for (let k = i + 1; k < n; k++) {
+                        if (augmentedMatrix[k][i].valueOf() !== 0) {
+                            swapRow = k;
+                            break;
+                        }
+                    }
+                    if (swapRow === -1) {
+                        throw new Error("El sistema no tiene solución única.");
+                    }
+                    [augmentedMatrix[i], augmentedMatrix[swapRow]] = [augmentedMatrix[swapRow], augmentedMatrix[i]];
+                }
+
+                let pivot = augmentedMatrix[i][i];
+                for (let j = 0; j < n + m; j++) {
+                    augmentedMatrix[i][j] = augmentedMatrix[i][j].div(pivot);
+                }
+
+                for (let j = 0; j < n; j++) {
+                    if (j !== i) {
+                        let factor = augmentedMatrix[j][i];
+                        for (let k = 0; k < n + m; k++) {
+                            augmentedMatrix[j][k] = augmentedMatrix[j][k].sub(factor.mul(augmentedMatrix[i][k]));
+                        }
+                    }
+                }
+            }
+
+            const resultMatrix = augmentedMatrix.map(row => row.slice(n));
+            setResultMatrix(resultMatrix);
+
+            const solutionText = resultMatrix.map(row => row.map(entry => entry.toFraction(true)).join(' ')).join('\n');
+            setSolution(solutionText);
+        } catch (error) {
+            setSolution(`Error en la resolución del sistema: ${error.message}`);
+        }
+    };
+
+    const resetMatrix = () => {
+        if (showLinearSystem) {
+            setMatrixA(matrixA.map(row => row.map(() => '')));
+            setMatrixB(matrixB.map(row => row.map(() => '')));
+        } else {
+            setMatrix(Array.from({ length: matrixSize.rows }, () => Array(matrixSize.columns).fill('')));
+        }
         setResultMatrix(null);
         setSolution('');
     };
@@ -327,12 +401,6 @@ export const MatrixProvider = ({ children }) => {
         return { soluciones_infinitas, variables: Array.from(variables) };
     };
 
-    const resetMatrix = () => {
-        setMatrix(Array.from({ length: matrixSize.rows }, () => Array(matrixSize.columns).fill('')));
-        setResultMatrix(null);
-        setSolution('');
-    };
-
     return (
         <MatrixContext.Provider value={{
             importMatrixFromFile,
@@ -342,9 +410,11 @@ export const MatrixProvider = ({ children }) => {
             resultMatrix,
             solution,
             updateMatrixSize,
+            updateLinearSystemDimensions,
             solveGaussJordan,
             calculateDeterminant,
             calculateInverse,
+            solveLinearSystem,
             displaySolution,
             resetMatrix,
             isModalOpen,
@@ -353,6 +423,11 @@ export const MatrixProvider = ({ children }) => {
             setMatrixSize,
             exportMatrixToFile,
             exportResultMatrixToFile,
+            matrixA,
+            setMatrixA,
+            matrixB,
+            setMatrixB,
+            showLinearSystem,
         }}>
             {children}
         </MatrixContext.Provider>

@@ -9,17 +9,19 @@ import MatrixResults from '../components/matrices/MatrixResults';
 import MatrixSolution from '../components/matrices/MatrixSolution';
 import ImportFileModal from '../components/matrices/ImportFileModal';
 import OnScreenKeyboard from '../components/matrices/OnScreenKeyboard';
+import LinearSystemModal from '../components/matrices/LinearSystemModal'; // Nuevo import
 
 const Matrices = () => {
     const {
         isModalOpen, openModal, closeModal, solveGaussJordan,
         calculateDeterminant, calculateInverse, resetMatrix,
         importMatrixFromFile, exportMatrixToFile, exportResultMatrixToFile,
-        matrix, matrixSize, setMatrix
+        matrix, matrixSize, setMatrix, showLinearSystem, updateLinearSystemDimensions
     } = useMatrix();
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [showKeyboard, setShowKeyboard] = useState(false);
     const [activeCell, setActiveCell] = useState(null);
+    const [isLinearSystemModalOpen, setIsLinearSystemModalOpen] = useState(false); // Estado para el modal del sistema lineal
 
     const handleImport = (matrixData) => {
         resetMatrix();
@@ -83,6 +85,14 @@ const Matrices = () => {
         }
     };
 
+    const handleLinearSystemButton = () => {
+        setIsLinearSystemModalOpen(true);
+    };
+
+    const handleLinearSystemDimensionsSelect = (sizeA, columnsB) => {
+        updateLinearSystemDimensions(sizeA, columnsB);
+    };
+
     return (
         <>
             <Navbar />
@@ -92,9 +102,15 @@ const Matrices = () => {
                 onExport={handleExport}
                 onReset={handleReset}
                 onExportResult={handleExportResult}
+                onSystemType={handleLinearSystemButton} // Manejo del botón de sistema lineal
             />
             <MatrixSizeModal isOpen={isModalOpen} onClose={closeModal} />
             <ImportFileModal isOpen={isImportModalOpen} onClose={toggleImportModal} onFileSelect={handleFileSelect} />
+            <LinearSystemModal
+                isOpen={isLinearSystemModalOpen}
+                onClose={() => setIsLinearSystemModalOpen(false)}
+                onDimensionsSelect={handleLinearSystemDimensionsSelect}
+            />
             <div className='grid grid-cols-12 gap-4 p-4'>
                 <div className='col-span-12 lg:col-span-5 flex flex-col items-center justify-center p-4'>
                     {showKeyboard && <OnScreenKeyboard onKeyPress={handleKeyPress} onClose={() => setShowKeyboard(false)} />}

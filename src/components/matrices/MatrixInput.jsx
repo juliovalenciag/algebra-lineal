@@ -5,7 +5,7 @@ import { MdKeyboardAlt } from "react-icons/md";
 import './MatrixInput.css';
 
 const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
-    const { matrixSize, matrix, setMatrix } = useMatrix();
+    const { matrixSize, matrix, setMatrix, matrixA, matrixB, setMatrixA, setMatrixB, showLinearSystem } = useMatrix();
     const { rows, columns } = matrixSize;
     const matrixRef = useRef(null);
     const containerRef = useRef(null);
@@ -15,14 +15,28 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
     const [panStart, setPanStart] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
-        setMatrix(Array.from({ length: rows }, () => Array(columns).fill('')));
-    }, [rows, columns, setMatrix]);
+        if (!showLinearSystem) {
+            setMatrix(Array.from({ length: rows }, () => Array(columns).fill('')));
+        }
+    }, [rows, columns, setMatrix, showLinearSystem]);
 
-    const handleInputChange = (value, rowIndex, colIndex) => {
-        const newMatrix = matrix.map((row, i) =>
-            row.map((val, j) => (i === rowIndex && j === colIndex ? value : val))
-        );
-        setMatrix(newMatrix);
+    const handleInputChange = (value, rowIndex, colIndex, matrixType = 'single') => {
+        if (matrixType === 'single') {
+            const newMatrix = matrix.map((row, i) =>
+                row.map((val, j) => (i === rowIndex && j === colIndex ? value : val))
+            );
+            setMatrix(newMatrix);
+        } else if (matrixType === 'A') {
+            const newMatrixA = matrixA.map((row, i) =>
+                row.map((val, j) => (i === rowIndex && j === colIndex ? value : val))
+            );
+            setMatrixA(newMatrixA);
+        } else if (matrixType === 'B') {
+            const newMatrixB = matrixB.map((row, i) =>
+                row.map((val, j) => (i === rowIndex && j === colIndex ? value : val))
+            );
+            setMatrixB(newMatrixB);
+        }
     };
 
     const handleZoomIn = () => {
@@ -66,6 +80,30 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
     const bgColorConstant = !isSquare ? 'bg-gray-300' : 'bg-white';
     const bracketColor = 'border-black';
 
+    const renderMatrix = (matrixData, matrixType) => (
+        <div className="grid matrix-grid" style={{
+            gridTemplateColumns: `repeat(${matrixData[0].length}, minmax(${entryWidth}px, 1fr))`,
+            gap: `${padding}px`,
+        }}>
+            {matrixData.map((row, rowIndex) => (
+                <React.Fragment key={rowIndex}>
+                    {row.map((value, colIndex) => (
+                        <input
+                            key={colIndex}
+                            id={`matrix-cell-${matrixType}-${rowIndex}-${colIndex}`}
+                            className={`p-2 border rounded ${colIndex === constantTermColumn ? bgColorConstant : bgColorDefault}`}
+                            type="text"
+                            value={value}
+                            onChange={(e) => handleInputChange(e.target.value, rowIndex, colIndex, matrixType)}
+                            onFocus={() => setActiveCell({ rowIndex, colIndex })}
+                            style={{ width: `${entryWidth}px`, height: `${entryHeight}px` }}
+                        />
+                    ))}
+                </React.Fragment>
+            ))}
+        </div>
+    );
+
     return (
         <div className='relative flex flex-col items-center shadow-lg rounded-md bg-gray-100 p-5 w-full h-full'>
             <div className="flex items-center justify-between w-full mb-4">
@@ -79,7 +117,7 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
                     <button onClick={onShowKeyboard} className="bg-primary text-white p-2 rounded">
                         <MdKeyboardAlt />
                     </button>
-                    <button onClick={onTab} className="bg-primary text-white p-2 rounded text-xs ">Tab</button>
+                    <button onClick={onTab} className="bg-primary text-white p-2 rounded text-xs">Tab</button>
                 </div>
             </div>
 
@@ -93,49 +131,83 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
                 style={{ cursor: isPanning ? 'grabbing' : 'grab' }}
             >
                 <div className="flex justify-center items-center overflow-auto">
-                    <div
-                        className="relative flex items-center matrix-wrapper"
-                        style={{
-                            padding: `${padding}px`,
-                            margin: `0px`,
-                            transform: `scale(${zoom})`,
-                            transformOrigin: 'top left'
-                        }}
-                    >
-                        <div className="absolute left-0 top-0 flex flex-col justify-between z-10"
-                            style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
-                            <div className={`${bracketColor} border-l-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
-                            <div className={`${bracketColor} border-l-4 flex-grow`}></div>
-                            <div className={`${bracketColor} border-l-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                    {!showLinearSystem ? (
+                        <div
+                            className="relative flex items-center matrix-wrapper"
+                            style={{
+                                padding: `${padding}px`,
+                                margin: `0px`,
+                                transform: `scale(${zoom})`,
+                                transformOrigin: 'top left'
+                            }}
+                        >
+                            <div className="absolute left-0 top-0 flex flex-col justify-between z-10"
+                                style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
+                                <div className={`${bracketColor} border-l-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                <div className={`${bracketColor} border-l-4 flex-grow`}></div>
+                                <div className={`${bracketColor} border-l-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                            </div>
+                            <div className="absolute right-0 top-0 flex flex-col justify-between z-10"
+                                style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
+                                <div className={`${bracketColor} border-r-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                <div className={`${bracketColor} border-r-4 flex-grow`}></div>
+                                <div className={`${bracketColor} border-r-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                            </div>
+                            {renderMatrix(matrix, 'single')}
                         </div>
-                        <div className="absolute right-0 top-0 flex flex-col justify-between z-10"
-                            style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
-                            <div className={`${bracketColor} border-r-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
-                            <div className={`${bracketColor} border-r-4 flex-grow`}></div>
-                            <div className={`${bracketColor} border-r-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                    ) : (
+                        <div className="flex items-center space-x-4">
+                            <div
+                                className="relative flex items-center matrix-wrapper"
+                                style={{
+                                    padding: `${padding}px`,
+                                    margin: `0px`,
+                                    transform: `scale(${zoom})`,
+                                    transformOrigin: 'top left'
+                                }}
+                            >
+                                <div className="absolute left-0 top-0 flex flex-col justify-between z-10"
+                                    style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
+                                    <div className={`${bracketColor} border-l-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                    <div className={`${bracketColor} border-l-4 flex-grow`}></div>
+                                    <div className={`${bracketColor} border-l-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                </div>
+                                <div className="absolute right-0 top-0 flex flex-col justify-between z-10"
+                                    style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
+                                    <div className={`${bracketColor} border-r-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                    <div className={`${bracketColor} border-r-4 flex-grow`}></div>
+                                    <div className={`${bracketColor} border-r-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                </div>
+                                {renderMatrix(matrixA, 'A')}
+                            </div>
+                            <div className="flex items-center">
+                                <span className="text-2xl font-bold">X = </span>
+                            </div>
+                            <div
+                                className="relative flex items-center matrix-wrapper"
+                                style={{
+                                    padding: `${padding}px`,
+                                    margin: `0px`,
+                                    transform: `scale(${zoom})`,
+                                    transformOrigin: 'top left'
+                                }}
+                            >
+                                <div className="absolute left-0 top-0 flex flex-col justify-between z-10"
+                                    style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
+                                    <div className={`${bracketColor} border-l-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                    <div className={`${bracketColor} border-l-4 flex-grow`}></div>
+                                    <div className={`${bracketColor} border-l-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                </div>
+                                <div className="absolute right-0 top-0 flex flex-col justify-between z-10"
+                                    style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
+                                    <div className={`${bracketColor} border-r-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                    <div className={`${bracketColor} border-r-4 flex-grow`}></div>
+                                    <div className={`${bracketColor} border-r-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                </div>
+                                {renderMatrix(matrixB, 'B')}
+                            </div>
                         </div>
-                        <div className="grid matrix-grid" style={{
-                            gridTemplateColumns: `repeat(${columns}, minmax(${entryWidth}px, 1fr))`,
-                            gap: `${padding}px`,
-                        }}>
-                            {matrix.map((row, rowIndex) => (
-                                <React.Fragment key={rowIndex}>
-                                    {row.map((value, colIndex) => (
-                                        <input
-                                            key={colIndex}
-                                            id={`matrix-cell-${rowIndex}-${colIndex}`}
-                                            className={`p-2 border rounded ${colIndex === constantTermColumn ? bgColorConstant : bgColorDefault}`}
-                                            type="text"
-                                            value={value}
-                                            onChange={(e) => handleInputChange(e.target.value, rowIndex, colIndex)}
-                                            onFocus={() => setActiveCell({ rowIndex, colIndex })}
-                                            style={{ width: `${entryWidth}px`, height: `${entryHeight}px` }}
-                                        />
-                                    ))}
-                                </React.Fragment>
-                            ))}
-                        </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </div>
