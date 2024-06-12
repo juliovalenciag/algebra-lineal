@@ -4,7 +4,7 @@ import importarIcon from '../../assets/img/importar.png';
 import exportarIcon from '../../assets/img/exportar.png';
 import reiniciarIcon from '../../assets/img/limpiar.png';
 import exportarResultadoIcon from '../../assets/img/exportarSalida.png';
-import matrizB from '../../assets/img/botonB.png';
+import matrizB from '../../assets/img/AXB.png';
 
 const MatrixToolbar = ({ onSizeSelect, onImport, onExport, onReset, onExportResult, onSystemType }) => {
     return (

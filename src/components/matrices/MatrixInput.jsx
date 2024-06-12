@@ -181,7 +181,8 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
                                 {renderMatrix(matrixA, 'A')}
                             </div>
                             <div className="flex items-center">
-                                <span className="text-2xl font-bold">X = </span>
+                                <span className="text-2xl font-bold">X </span>
+                                <span className="text-2xl font-bold">= </span>
                             </div>
                             <div
                                 className="relative flex items-center matrix-wrapper"

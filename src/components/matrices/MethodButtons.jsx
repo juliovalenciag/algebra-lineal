@@ -4,7 +4,7 @@ import { useMatrix } from '../../context/MatrixContext';
 import gaussJordanIcon from '../../assets/img/gj1.png';
 import determinanteIcon from '../../assets/img/determinante.png';
 import inversaIcon from '../../assets/img/inversa.png';
-import systemIcon from '../../assets/img/botonB.png'; // Icono para el sistema lineal
+import systemIcon from '../../assets/img/AXB.png'; // Icono para el sistema lineal
 
 const MethodButtons = () => {
     const { solveGaussJordan, calculateDeterminant, calculateInverse, solveLinearSystem } = useMatrix();
