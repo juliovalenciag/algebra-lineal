@@ -8,35 +8,35 @@ import matrizB from '../../assets/img/AXB.png';
 
 const MatrixToolbar = ({ onSizeSelect, onImport, onExport, onReset, onExportResult, onSystemType }) => {
     return (
-        <div className='flex flex-wrap justify-center lg:justify-start space-x-2 space-y-2 lg:space-y-0 p-4 shadow-md bg-white dark:bg-dark-foreground '>
-            <button onClick={onImport} className='flex flex-col lg:flex-row items-center justify-center space-x-0 lg:space-x-2 bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
-                <img src={importarIcon} alt="Importar" className='w-10 h-10 lg:w-12 lg:h-12' style={{ minWidth: '40px', minHeight: '40px' }} />
-                <span className='hidden lg:inline text-sm lg:text-base'>Importar</span>
+        <div className='flex flex-row justify-center lg:justify-start gap-2 p-4 shadow-md bg-white dark:bg-dark-foreground overflow-x-auto'>
+            <button onClick={onImport} className='flex items-center justify-center bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
+                <img src={importarIcon} alt="Importar" className='w-10 h-10 lg:w-12 lg:h-12' />
+                <span className='hidden lg:inline text-sm lg:text-base ml-2'>Importar</span>
             </button>
 
-            <button onClick={onSizeSelect} className='flex flex-col lg:flex-row items-center justify-center space-x-0 lg:space-x-2 bg-primary  hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
-                <img src={cambiarIcon} alt="Seleccionar tamaño" className='w-10 h-10 lg:w-12 lg:h-12' style={{ minWidth: '40px', minHeight: '40px' }} />
-                <span className='hidden lg:inline text-sm lg:text-base'>Seleccionar tamaño</span>
+            <button onClick={onSizeSelect} className='flex items-center justify-center bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
+                <img src={cambiarIcon} alt="Seleccionar tamaño" className='w-10 h-10 lg:w-12 lg:h-12' />
+                <span className='hidden lg:inline text-sm lg:text-base ml-2'>Seleccionar tamaño</span>
             </button>
 
-            <button onClick={onExport} className='flex flex-col lg:flex-row items-center justify-center space-x-0 lg:space-x-2 bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
-                <img src={exportarIcon} alt="Exportar" className='w-10 h-10 lg:w-12 lg:h-12' style={{ minWidth: '40px', minHeight: '40px' }} />
-                <span className='hidden lg:inline text-sm lg:text-base'>Exportar</span>
+            <button onClick={onExport} className='flex items-center justify-center bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
+                <img src={exportarIcon} alt="Exportar" className='w-10 h-10 lg:w-12 lg:h-12' />
+                <span className='hidden lg:inline text-sm lg:text-base ml-2'>Exportar</span>
             </button>
 
-            <button onClick={onReset} className='flex flex-col lg:flex-row items-center justify-center space-x-0 lg:space-x-2 bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
-                <img src={reiniciarIcon} alt="Reiniciar" className='w-10 h-10 lg:w-12 lg:h-12' style={{ minWidth: '40px', minHeight: '40px' }} />
-                <span className='hidden lg:inline text-sm lg:text-base'>Reiniciar</span>
+            <button onClick={onReset} className='flex items-center justify-center bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
+                <img src={reiniciarIcon} alt="Reiniciar" className='w-10 h-10 lg:w-12 lg:h-12' />
+                <span className='hidden lg:inline text-sm lg:text-base ml-2'>Reiniciar</span>
             </button>
 
-            <button onClick={onExportResult} className='flex flex-col lg:flex-row items-center justify-center space-x-0 lg:space-x-2 bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
-                <img src={exportarResultadoIcon} alt="Exportar resultado" className='w-10 h-10 lg:w-12 lg:h-12' style={{ minWidth: '40px', minHeight: '40px' }} />
-                <span className='hidden lg:inline text-sm lg:text-base'>Exportar resultado</span>
+            <button onClick={onExportResult} className='flex items-center justify-center bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
+                <img src={exportarResultadoIcon} alt="Exportar resultado" className='w-10 h-10 lg:w-12 lg:h-12' />
+                <span className='hidden lg:inline text-sm lg:text-base ml-2'>Exportar resultado</span>
             </button>
 
-            <button onClick={onSystemType} className='flex flex-col lg:flex-row items-center justify-center space-x-0 lg:space-x-2 bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
-                <img src={matrizB} alt="Exportar resultado" className='w-10 h-10 lg:w-12 lg:h-12' style={{ minWidth: '40px', minHeight: '40px' }} />
-                <span className='hidden lg:inline text-sm lg:text-base'>Sistema lineal</span>
+            <button onClick={onSystemType} className='flex items-center justify-center bg-primary hover:bg-primary-dark dark:hover:bg-secondary-dark text-white p-2 lg:p-4 rounded-md'>
+                <img src={matrizB} alt="Sistema lineal" className='w-10 h-10 lg:w-12 lg:h-12' />
+                <span className='hidden lg:inline text-sm lg:text-base ml-2'>Sistema lineal</span>
             </button>
         </div>
     );
