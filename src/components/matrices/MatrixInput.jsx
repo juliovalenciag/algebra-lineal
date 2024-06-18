@@ -130,7 +130,7 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
                 onMouseLeave={handleMouseUp}
                 style={{ cursor: isPanning ? 'grabbing' : 'grab' }}
             >
-                <div className="flex justify-center items-center overflow-auto">
+                <div className="flex justify-center items-center space-x-4 overflow-auto">
                     {!showLinearSystem ? (
                         <div
                             className="relative flex items-center matrix-wrapper"
@@ -180,9 +180,13 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
                                 </div>
                                 {renderMatrix(matrixA, 'A')}
                             </div>
-                            <div className="flex items-center">
-                                <span className="text-2xl font-bold">X </span>
-                                <span className="text-2xl font-bold">= </span>
+                            <div className="text-2xl font-bold flex flex-col items-center justify-center"
+                                style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}>
+                                <span>X</span>
+                            </div>
+                            <div className="text-2xl font-bold flex flex-col items-center justify-center"
+                                style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}>
+                                <span>=</span>
                             </div>
                             <div
                                 className="relative flex items-center matrix-wrapper"
