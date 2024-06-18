@@ -104,7 +104,12 @@ export const MatrixProvider = ({ children }) => {
             const columns = matrixData[0].length;
             setMatrixSize({ rows, columns });
             setTimeout(() => {
-                setMatrix(matrixData);
+                const processedMatrix = matrixData.map(row => row.map(cell => {
+                    return cell
+                        .replace(/pi/g, 'π')
+                        .replace(/exp\(1\)/g, 'e');
+                }));
+                setMatrix(processedMatrix);
                 setResultMatrix(null);
                 setSolution('');
             }, 0);
@@ -150,7 +155,8 @@ export const MatrixProvider = ({ children }) => {
     const parseAndEvaluateMatrix = (matrix) => {
         return matrix.map(row => row.map(cell => {
             try {
-                return evaluate(cell);
+                const processedCell = cell.replace(/π/g, 'pi').replace(/e/g, 'exp(1)');
+                return evaluate(processedCell);
             } catch (error) {
                 console.error(`Error evaluando el valor de la celda "${cell}": ${error.message}`);
                 return 0;
@@ -343,7 +349,6 @@ export const MatrixProvider = ({ children }) => {
             }
         }
 
-        // Handle the zero case
         for (let i = 0; i < solution_texts.length; i++) {
             if (solution_texts[i].includes(" = ")) {
                 const parts = solution_texts[i].split(" = ");

@@ -21,19 +21,23 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
     }, [rows, columns, setMatrix, showLinearSystem]);
 
     const handleInputChange = (value, rowIndex, colIndex, matrixType = 'single') => {
+        const processedValue = value
+            .replace(/pi/g, 'π')
+            .replace(/exp\(1\)/g, 'e');
+
         if (matrixType === 'single') {
             const newMatrix = matrix.map((row, i) =>
-                row.map((val, j) => (i === rowIndex && j === colIndex ? value : val))
+                row.map((val, j) => (i === rowIndex && j === colIndex ? processedValue : val))
             );
             setMatrix(newMatrix);
         } else if (matrixType === 'A') {
             const newMatrixA = matrixA.map((row, i) =>
-                row.map((val, j) => (i === rowIndex && j === colIndex ? value : val))
+                row.map((val, j) => (i === rowIndex && j === colIndex ? processedValue : val))
             );
             setMatrixA(newMatrixA);
         } else if (matrixType === 'B') {
             const newMatrixB = matrixB.map((row, i) =>
-                row.map((val, j) => (i === rowIndex && j === colIndex ? value : val))
+                row.map((val, j) => (i === rowIndex && j === colIndex ? processedValue : val))
             );
             setMatrixB(newMatrixB);
         }
