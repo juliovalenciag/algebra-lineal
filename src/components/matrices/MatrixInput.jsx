@@ -131,12 +131,14 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
         <div className='relative flex flex-col items-center shadow-lg rounded-md bg-gray-100 p-5 w-full h-full'>
             <div className="flex items-center justify-between w-full mb-4">
                 <div className="flex space-x-1">
+                    {/*
                     <button onClick={handleZoomOut} className="bg-primary text-white p-2 rounded">
                         <BiSolidZoomOut />
                     </button>
                     <button onClick={handleZoomIn} className="bg-primary text-white p-2 rounded">
                         <BiSolidZoomIn />
                     </button>
+                    */}
                     <button onClick={onShowKeyboard} className="bg-primary text-white p-2 rounded">
                         <MdKeyboardAlt />
                     </button>
