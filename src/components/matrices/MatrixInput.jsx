@@ -69,15 +69,13 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
     const entryHeight = Math.max(40, (300 / Math.max(rows, 10)) * zoom);
     const padding = 5 * zoom;
     const margin = 5 * zoom;
-    const bracketWidth = 20 * zoom;
-    const bracketDepth = 10 * zoom;
-    const bracketHeight = `${rows * entryHeight + (rows - 1) * padding}px`;
+
+    const getBracketHeight = (numRows) => `${numRows * entryHeight + (numRows - 1) * padding}px`;
 
     const isSquare = rows === columns;
-    const constantTermColumn = !isSquare ? columns - 1 : null;
 
     const bgColorDefault = 'bg-white';
-    const bgColorConstant = !isSquare ? 'bg-gray-300' : 'bg-white';
+    const bgColorConstant = 'bg-gray-300';
     const bracketColor = 'border-black';
 
     const renderMatrix = (matrixData, matrixType) => (
@@ -91,11 +89,11 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
                         <input
                             key={colIndex}
                             id={`matrix-cell-${matrixType}-${rowIndex}-${colIndex}`}
-                            className={`p-2 border rounded ${colIndex === constantTermColumn ? bgColorConstant : bgColorDefault}`}
+                            className={`p-2 border rounded ${matrixType === 'single' && colIndex === row.length - 1 && !isSquare ? bgColorConstant : bgColorDefault}`}
                             type="text"
                             value={value}
                             onChange={(e) => handleInputChange(e.target.value, rowIndex, colIndex, matrixType)}
-                            onFocus={() => setActiveCell({ rowIndex, colIndex })}
+                            onFocus={() => setActiveCell({ rowIndex, colIndex, matrixType })}
                             style={{ width: `${entryWidth}px`, height: `${entryHeight}px` }}
                         />
                     ))}
@@ -103,6 +101,27 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
             ))}
         </div>
     );
+
+    const handleTab = () => {
+        if (activeCell) {
+            const { rowIndex, colIndex, matrixType } = activeCell;
+            let newColIndex, newRowIndex;
+
+            if (matrixType === 'single') {
+                newColIndex = colIndex + 1 < matrixSize.columns ? colIndex + 1 : 0;
+                newRowIndex = newColIndex === 0 ? (rowIndex + 1) % matrixSize.rows : rowIndex;
+            } else if (matrixType === 'A') {
+                newColIndex = colIndex + 1 < matrixA[0].length ? colIndex + 1 : 0;
+                newRowIndex = newColIndex === 0 ? (rowIndex + 1) % matrixA.length : rowIndex;
+            } else if (matrixType === 'B') {
+                newColIndex = colIndex + 1 < matrixB[0].length ? colIndex + 1 : 0;
+                newRowIndex = newColIndex === 0 ? (rowIndex + 1) % matrixB.length : rowIndex;
+            }
+
+            setActiveCell({ rowIndex: newRowIndex, colIndex: newColIndex, matrixType });
+            document.querySelector(`#matrix-cell-${matrixType}-${newRowIndex}-${newColIndex}`).focus();
+        }
+    };
 
     return (
         <div className='relative flex flex-col items-center shadow-lg rounded-md bg-gray-100 p-5 w-full h-full'>
@@ -142,16 +161,16 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
                             }}
                         >
                             <div className="absolute left-0 top-0 flex flex-col justify-between z-10"
-                                style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
-                                <div className={`${bracketColor} border-l-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                style={{ width: `${20 * zoom}px`, height: `calc(${getBracketHeight(rows)} + ${padding * 2}px)` }}>
+                                <div className={`${bracketColor} border-l-4 border-t-4`} style={{ height: `${10 * zoom}px` }}></div>
                                 <div className={`${bracketColor} border-l-4 flex-grow`}></div>
-                                <div className={`${bracketColor} border-l-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                <div className={`${bracketColor} border-l-4 border-b-4`} style={{ height: `${10 * zoom}px` }}></div>
                             </div>
                             <div className="absolute right-0 top-0 flex flex-col justify-between z-10"
-                                style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
-                                <div className={`${bracketColor} border-r-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                style={{ width: `${20 * zoom}px`, height: `calc(${getBracketHeight(rows)} + ${padding * 2}px)` }}>
+                                <div className={`${bracketColor} border-r-4 border-t-4`} style={{ height: `${10 * zoom}px` }}></div>
                                 <div className={`${bracketColor} border-r-4 flex-grow`}></div>
-                                <div className={`${bracketColor} border-r-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                <div className={`${bracketColor} border-r-4 border-b-4`} style={{ height: `${10 * zoom}px` }}></div>
                             </div>
                             {renderMatrix(matrix, 'single')}
                         </div>
@@ -167,16 +186,16 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
                                 }}
                             >
                                 <div className="absolute left-0 top-0 flex flex-col justify-between z-10"
-                                    style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
-                                    <div className={`${bracketColor} border-l-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                    style={{ width: `${20 * zoom}px`, height: `calc(${getBracketHeight(matrixA.length)} + ${padding * 2}px)` }}>
+                                    <div className={`${bracketColor} border-l-4 border-t-4`} style={{ height: `${10 * zoom}px` }}></div>
                                     <div className={`${bracketColor} border-l-4 flex-grow`}></div>
-                                    <div className={`${bracketColor} border-l-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                    <div className={`${bracketColor} border-l-4 border-b-4`} style={{ height: `${10 * zoom}px` }}></div>
                                 </div>
                                 <div className="absolute right-0 top-0 flex flex-col justify-between z-10"
-                                    style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
-                                    <div className={`${bracketColor} border-r-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                    style={{ width: `${20 * zoom}px`, height: `calc(${getBracketHeight(matrixA.length)} + ${padding * 2}px)` }}>
+                                    <div className={`${bracketColor} border-r-4 border-t-4`} style={{ height: `${10 * zoom}px` }}></div>
                                     <div className={`${bracketColor} border-r-4 flex-grow`}></div>
-                                    <div className={`${bracketColor} border-r-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                    <div className={`${bracketColor} border-r-4 border-b-4`} style={{ height: `${10 * zoom}px` }}></div>
                                 </div>
                                 {renderMatrix(matrixA, 'A')}
                             </div>
@@ -198,16 +217,16 @@ const MatrixInput = ({ onShowKeyboard, setActiveCell, activeCell, onTab }) => {
                                 }}
                             >
                                 <div className="absolute left-0 top-0 flex flex-col justify-between z-10"
-                                    style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
-                                    <div className={`${bracketColor} border-l-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                    style={{ width: `${20 * zoom}px`, height: `calc(${getBracketHeight(matrixB.length)} + ${padding * 2}px)` }}>
+                                    <div className={`${bracketColor} border-l-4 border-t-4`} style={{ height: `${10 * zoom}px` }}></div>
                                     <div className={`${bracketColor} border-l-4 flex-grow`}></div>
-                                    <div className={`${bracketColor} border-l-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                    <div className={`${bracketColor} border-l-4 border-b-4`} style={{ height: `${10 * zoom}px` }}></div>
                                 </div>
                                 <div className="absolute right-0 top-0 flex flex-col justify-between z-10"
-                                    style={{ width: bracketWidth, height: `calc(${bracketHeight} + ${padding * 2}px)` }}>
-                                    <div className={`${bracketColor} border-r-4 border-t-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                    style={{ width: `${20 * zoom}px`, height: `calc(${getBracketHeight(matrixB.length)} + ${padding * 2}px)` }}>
+                                    <div className={`${bracketColor} border-r-4 border-t-4`} style={{ height: `${10 * zoom}px` }}></div>
                                     <div className={`${bracketColor} border-r-4 flex-grow`}></div>
-                                    <div className={`${bracketColor} border-r-4 border-b-4`} style={{ height: `${bracketDepth}px` }}></div>
+                                    <div className={`${bracketColor} border-r-4 border-b-4`} style={{ height: `${10 * zoom}px` }}></div>
                                 </div>
                                 {renderMatrix(matrixB, 'B')}
                             </div>

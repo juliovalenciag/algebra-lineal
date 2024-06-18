@@ -25,12 +25,12 @@ export const MatrixProvider = ({ children }) => {
         setMatrix(Array.from({ length: rows }, () => Array(columns).fill('')));
         setResultMatrix(null);
         setSolution('');
-        setShowLinearSystem(false); 
+        setShowLinearSystem(false);
     };
 
-    const updateLinearSystemDimensions = (sizeA, columnsB) => {
-        const matrixA = Array.from({ length: sizeA }, () => Array(sizeA).fill(''));
-        const matrixB = Array.from({ length: sizeA }, () => Array(columnsB).fill(''));
+    const updateLinearSystemDimensions = (rowsA, columnsA, columnsB) => {
+        const matrixA = Array.from({ length: rowsA }, () => Array(columnsA).fill(''));
+        const matrixB = Array.from({ length: rowsA }, () => Array(columnsB).fill(''));
         setMatrixA(matrixA);
         setMatrixB(matrixB);
         setShowLinearSystem(true);
@@ -85,6 +85,7 @@ export const MatrixProvider = ({ children }) => {
             setSolution(`Error en la resolución del sistema: ${error.message}`);
         }
     };
+
 
     const resetMatrix = () => {
         if (showLinearSystem) {

@@ -9,7 +9,7 @@ import MatrixResults from '../components/matrices/MatrixResults';
 import MatrixSolution from '../components/matrices/MatrixSolution';
 import ImportFileModal from '../components/matrices/ImportFileModal';
 import OnScreenKeyboard from '../components/matrices/OnScreenKeyboard';
-import LinearSystemModal from '../components/matrices/LinearSystemModal'; // Nuevo import
+import LinearSystemModal from '../components/matrices/LinearSystemModal';
 
 const Matrices = () => {
     const {
@@ -21,7 +21,7 @@ const Matrices = () => {
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [showKeyboard, setShowKeyboard] = useState(false);
     const [activeCell, setActiveCell] = useState(null);
-    const [isLinearSystemModalOpen, setIsLinearSystemModalOpen] = useState(false); // Estado para el modal del sistema lineal
+    const [isLinearSystemModalOpen, setIsLinearSystemModalOpen] = useState(false);
 
     const handleImport = (matrixData) => {
         resetMatrix();
@@ -89,8 +89,8 @@ const Matrices = () => {
         setIsLinearSystemModalOpen(true);
     };
 
-    const handleLinearSystemDimensionsSelect = (sizeA, columnsB) => {
-        updateLinearSystemDimensions(sizeA, columnsB);
+    const handleLinearSystemDimensionsSelect = (rowsA, columnsA, columnsB) => {
+        updateLinearSystemDimensions(rowsA, columnsA, columnsB);
     };
 
     return (
@@ -102,7 +102,7 @@ const Matrices = () => {
                 onExport={handleExport}
                 onReset={handleReset}
                 onExportResult={handleExportResult}
-                onSystemType={handleLinearSystemButton} // Manejo del botón de sistema lineal
+                onSystemType={handleLinearSystemButton}
             />
             <MatrixSizeModal isOpen={isModalOpen} onClose={closeModal} />
             <ImportFileModal isOpen={isImportModalOpen} onClose={toggleImportModal} onFileSelect={handleFileSelect} />

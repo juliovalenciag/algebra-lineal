@@ -3,12 +3,18 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 
 const LinearSystemModal = ({ isOpen, onClose, onDimensionsSelect }) => {
-    const [matrixASize, setMatrixASize] = useState(3);
+    const [matrixARows, setMatrixARows] = useState(3);
+    const [matrixAColumns, setMatrixAColumns] = useState(3);
     const [matrixBColumns, setMatrixBColumns] = useState(2);
 
-    const handleMatrixASizeChange = (e) => {
-        const size = parseInt(e.target.value, 10);
-        setMatrixASize(size);
+    const handleMatrixARowsChange = (e) => {
+        const rows = parseInt(e.target.value, 10);
+        setMatrixARows(rows);
+    };
+
+    const handleMatrixAColumnsChange = (e) => {
+        const columns = parseInt(e.target.value, 10);
+        setMatrixAColumns(columns);
     };
 
     const handleMatrixBColumnsChange = (e) => {
@@ -17,7 +23,7 @@ const LinearSystemModal = ({ isOpen, onClose, onDimensionsSelect }) => {
     };
 
     const handleAccept = () => {
-        onDimensionsSelect(matrixASize, matrixBColumns);
+        onDimensionsSelect(matrixARows, matrixAColumns, matrixBColumns);
         onClose();
     };
 
@@ -53,12 +59,22 @@ const LinearSystemModal = ({ isOpen, onClose, onDimensionsSelect }) => {
                                 </Dialog.Title>
                                 <div className="mt-4 flex flex-col space-y-4">
                                     <div>
-                                        <label className="text-gray-700 dark:text-gray-300">Dimensiones de A (cuadrada):</label>
+                                        <label className="text-gray-700 dark:text-gray-300">Filas de A:</label>
                                         <input
                                             type="number"
                                             min="1"
-                                            value={matrixASize}
-                                            onChange={handleMatrixASizeChange}
+                                            value={matrixARows}
+                                            onChange={handleMatrixARowsChange}
+                                            className="w-full mt-2 p-2 border rounded"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="text-gray-700 dark:text-gray-300">Columnas de A:</label>
+                                        <input
+                                            type="number"
+                                            min="1"
+                                            value={matrixAColumns}
+                                            onChange={handleMatrixAColumnsChange}
                                             className="w-full mt-2 p-2 border rounded"
                                         />
                                     </div>
